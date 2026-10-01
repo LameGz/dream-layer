@@ -13,7 +13,7 @@
   <img src="https://img.shields.io/badge/deps-pyyaml%20%2B%20openai-176b75?style=flat-square" alt="deps">
 </p>
 
-# <img src="docs/assets/icon.svg" width="42" valign="middle" alt="Dream Layer icon"> Dream Layer
+# <img src="docs/assets/icon-lockup.svg" width="46" valign="middle" alt="Dream Layer icon"> Dream Layer
 
 > Your systems see a lot every day — and throw a lot away.
 > Dream Layer takes the fragments that flow through (including the ones you rejected), pairs them at random each night, collides them at temperature 1.2, and gives you **at most 3 observations + questions** in the morning.

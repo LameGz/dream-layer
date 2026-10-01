@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <radialGradient id="halo" cx="0.72" cy="0.20" r="0.55">
+      <stop offset="0%" stop-color="#a9c6d4" stop-opacity="0.10"/>
+      <stop offset="100%" stop-color="#a9c6d4" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="moon" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#c6dae6"/>
+      <stop offset="100%" stop-color="#8fb3c2"/>
+    </linearGradient>
+    <radialGradient id="pupilGlow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#d9a878" stop-opacity="0.28"/>
+      <stop offset="100%" stop-color="#d9a878" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- 夜:圆角方形底 -->
+  <rect x="0" y="0" width="1024" height="1024" rx="196" fill="#0a0e15"/>
+  <rect x="0" y="0" width="1024" height="1024" rx="196" fill="url(#halo)"/>
+
+  <!-- 星点:偶尔,从不成群;不贴月牙,不碰字标 -->
+  <circle cx="690" cy="238" r="3.2" fill="#e9e4d6" opacity="0.85"/>
+  <circle cx="772" cy="360" r="2" fill="#e9e4d6" opacity="0.5"/>
+  <circle cx="300" cy="168" r="2.4" fill="#e9e4d6" opacity="0.6"/>
+  <circle cx="786" cy="636" r="2" fill="#e9e4d6" opacity="0.4"/>
+
+  <!-- 月牙:眼睛的弧线;怀抱朝右(整体上移,为字标留夜) -->
+  <path d="M 460 140
+           A 280 280 0 1 0 460 700
+           A 322 322 0 0 1 460 140 Z"
+        fill="url(#moon)"/>
+
+  <!-- 瞳孔:唯一的暖色,在月牙怀抱的暗处 -->
+  <circle cx="496" cy="420" r="110" fill="url(#pupilGlow)"/>
+  <circle cx="496" cy="420" r="40" fill="#d9a878"/>
+  <circle cx="485" cy="409" r="9.5" fill="#e9e4d6" opacity="0.85"/>
+
+  <!-- 字标塔:DREAM 为主,LAYER 为影;细体大间距,刻在夜色里 -->
+  <text x="460" y="806" text-anchor="middle"
+        font-family="'JetBrains Mono','Consolas','Courier New',monospace"
+        font-size="76" letter-spacing="20" fill="#a9c6d4" opacity="0.62">DREAM</text>
+  <text x="460" y="896" text-anchor="middle"
+        font-family="'JetBrains Mono','Consolas','Courier New',monospace"
+        font-size="76" letter-spacing="20" fill="#a9c6d4" opacity="0.40">LAYER</text>
+</svg>
