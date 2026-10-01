@@ -1,0 +1,15 @@
+# weights.yaml —— 权重表(v0.3 §4.2)。G2:权重数值只存在于此文件,core 不硬编码、不兜底。
+tag_weights:
+  selected: 1.0    # 头条和垃圾同场,梦不看资格
+  rejected: 2.0    # 暗物质优先翻检——白天没被看过,夜里优先回看
+  hesitated: 3.0   # 人看过、没拍板;"情绪强度高的记忆优先巩固"
+  discarded: 1.5
+  unknown: 1.0     # 缺省
+
+history_sample: 6           # 历史乱入条数(旧记忆乱入,梦到十年前的人不需要理由)
+history_window_days: 90     # 历史抽样窗口;素材池同窗口滚动清理
+
+# 覆盖 boost(C-3):从未入梦或距上次 > boost_days 天 -> 权重 ×factor。
+# 纯结构性修正,不碰语义(G1)。
+coverage_boost_factor: 2.0
+coverage_boost_days: 14

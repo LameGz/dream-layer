@@ -1,0 +1,15 @@
+# 虚拟环境
+.venv/
+
+# Python 产物
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# 运行时产物不入库(data/ 整体忽略;种子是交付物,显式保留)
+data/**
+!data/seed/
+!data/seed/**
+
+# 演示脚本(工作区临时文件,不入库)
+rehearsal_night.py

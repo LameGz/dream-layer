@@ -1,0 +1,7 @@
+# engine.yaml —— LLM 端点(施工图 §4.4;base_url/model 为示例值,OpenAI 兼容即可换引擎)
+base_url: "https://open.bigmodel.cn/api/paas/v4"   # 示例;GLM/DeepSeek/vLLM/ollama 皆可
+model: "glm-4-flash"                               # 示例;小而便宜即可
+api_key_env: "DREAM_LLM_API_KEY"                   # 密钥不落盘(§8 的一致性);--fake 模式不需要
+concurrency: 5                                     # 微型梦天然并行(施工图 §1)
+request_timeout_s: 60
+refusal_retry: 1                                   # 拒答 -> 换 persona 重试次数;每次尝试都保留

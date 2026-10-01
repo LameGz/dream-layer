@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dream-layer"
+version = "0.1.0"
+description = "Dream Layer P0 — agent 工作流的 REM 层:节律触发、强制随机配对、无目标自由联想"
+requires-python = ">=3.11"
+dependencies = [
+    "pyyaml>=6.0",
+    "openai>=1.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[tool.setuptools]
+packages = ["dreamlayer", "dreamlayer.collectors"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

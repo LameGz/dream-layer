@@ -1,0 +1,83 @@
+# rhythm.yaml —— 节律(v0.3 §5 表全量)+ 配对约束 + 采集器配置
+collect_time: "02:30"          # 读盘采集时刻
+dream_time: "03:00"            # 入梦时刻(本地时区)
+wake_time: "05:00"             # 醒来筛选时刻(P1:两路筛选 -> 两道闸 -> 晨报)
+min_pool: 10                   # 当日素材水位下限;不足记"太累但没东西可梦"(真实源接入后按产出调整)
+pairs_per_night: 20            # 微型梦次数
+temperature: 1.2               # 梦的荒诞度(v0.3 §4.2)
+max_tokens: 300                # 微型梦 2-3 句,足够
+content_max_chars: 2000        # 单条素材入池硬截断(优先用连接器 summary)
+pair_repeat: "never"           # 单夜同一素材不重复入对(G6,P0 固化)
+coverage_counter: true         # 跨夜覆盖计数,防固定配对圈
+max_reflux_per_day: 3          # 晨报回流上限(FR-C4:两路合计 top3)
+quiet_cycle: { idle_days: 7, mode: "alternate_days" }   # 连续 7 天无有效回流 -> 隔日梦(FR-D4;mode: off 关闭)
+
+# 醒来筛选第二步的打包调用(P1):提取任务,低温;上限放宽到 1500 token 容纳全部片段
+wake_temperature: 0.3
+wake_max_tokens: 1500
+webhook_url_env: "DREAM_WEBHOOK_URL"   # 晨报 webhook 推送 URL 的环境变量名(URL 不落盘)
+
+# 配对约束分级可配(C-3):硬约束必须全部满足,软约束尽量满足、放宽计数。
+# P0 只接一个采集源,origin 若作硬约束必然大面积 relaxed —— 默认降为软约束;
+# 接入第二来源(P1 drop)后可在配置里升硬。
+pair_constraints:
+  hard: [tag]
+  soft: [origin, time_bucket]
+
+# 视角乱入人格池(C-5 默认六条)
+personas:
+  - 竞争对手的眼光
+  - 假设十年后回看
+  - 悲观主义者的直觉
+  - 如果你是被拒绝的那一方
+  - 一个刚入职的实习生
+  - 审计员的怀疑
+
+# 采集器配置(P0:demo 种子;P1:drop watch 目录 + 读盘采集示例)
+collectors:
+  demo:
+    # 留空/null 用默认 <data-dir>/seed/demo_day.jsonl;真实源接好后置 null 并删除种子文件即可停用
+    seed_path: null
+  drop:
+    - name: dev-tools
+      path: "data/drop"          # Skill/CLI 的 python -m dreamlayer drop 写到这里,02:30 统一入池
+  # drop 是 FR-G3 的 watch 目录列表:listen 端点把会话废料 POST 成其中的 jsonl,
+  # collect 时读入;照下面的样子加:
+  # drop:
+  #   - name: dev-tools
+  #     origin: dev-tools
+  #     path: "data/drop"          # listen --drop-dir 指向同一目录
+  #     default_tag: discarded
+  read_disk:
+    # 知识库:E:/Vault(PARA 结构;模板与附件不读)
+    - name: knowledge-vault
+      origin: vault
+      path_glob: "E:/Vault/**/*.md"
+      format: mdfile              # 整篇笔记 = 一条碎片
+      default_tag: selected
+    # F 盘研究文档:LLM 记忆方向
+    - name: llm-research
+      origin: research
+      path_glob: "F:/大模型项目/*.md"
+      format: mdfile
+      default_tag: selected
+    - name: synapse-docs
+      origin: research
+      path_glob: "F:/大模型项目/synapse-graph-skills/*.md"
+      format: mdfile
+      default_tag: selected
+    - name: paper-extracts
+      origin: research
+      path_glob: "F:/大模型项目/Synapse-Literature-Review/_extract_*.txt"
+      format: mdfile
+      default_tag: selected
+  # read_disk 是 source 列表,接真实采集源时照下面的样子加(施工图 §4.6):
+  # read_disk:
+  #   - name: daily-pipeline
+  #     origin: daily-pipeline
+  #     path_glob: "F:/pipeline/output/**/*.jsonl"
+  #     format: jsonl              # jsonl | log | md
+  #     content_field: text
+  #     time_field: ts
+  #     tag_map: { drop: rejected, skip: discarded, flag: hesitated }
+  #     default_tag: unknown

@@ -1,0 +1,34 @@
+# privacy.yaml —— 隐私(P0 生效,不是 P1 的待办;v0.3 §8)
+# 默认 deny:排除清单优先级高于任何连接器配置;路径级排除发生在读取文件之前(不读内容)。
+exclude_globs:
+  - '**/.env*'
+  - '**/*.pem'
+  - '**/*.key'
+  - '**/*.keystore'
+  - '**/*credential*'
+  - '**/*secret*'
+  - '**/*token*'
+  - '**/node_modules/**'
+  - '**/.git/objects/**'
+
+# 脱敏正则:命中替换为 [REDACTED];打码字符占比 > 0.3 时整条丢弃。
+# 脱敏发生在入池之前(G5)。
+redact_patterns:
+  - 'sk-[A-Za-z0-9]{16,}'
+  - 'AKIA[0-9A-Z]{16}'
+  - 'ghp_[A-Za-z0-9]{30,}'
+  - '(?i)(password|passwd|secret|token)\s*[:=]\s*\S{6,}'
+  - '(?i)bearer\s+[A-Za-z0-9._-]{20,}'   # 通用 bearer token 形态(红队审计补)
+
+# journal 本地 only:落盘路径命中云同步标记(OneDrive/Dropbox/百度网盘/坚果云/iCloud)直接拒绝。
+journal_local_only: true
+retention_days: 90            # 素材池滚动清理(P1);journal 永久但仅本地
+
+# origin 级开关:任一 origin 可整体不入梦(值 false = 不入梦)。
+# 例:{ codex-session: false }
+origin_switches: {}
+
+# 隐私模式:open(默认)= 允许云端引擎——注意:素材内容会随 prompt 发往 engine.yaml 的 base_url;
+# local_only = 引擎 base_url 必须指向本机(127.0.0.1/localhost,如 ollama),否则拒绝启动。
+# 要"梦话不出本机",把 mode 改成 local_only 并把引擎指到本地端点。
+mode: open
