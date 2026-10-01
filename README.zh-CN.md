@@ -12,7 +12,7 @@
   <img src="https://img.shields.io/badge/license-MIT-176b75?style=flat-square" alt="MIT License">
 </p>
 
-# Dream Layer
+# <img src="docs/assets/icon.svg" width="42" valign="middle" alt="Dream Layer 图标"> Dream Layer
 
 > 你的系统每天流过很多东西,也扔掉了很多。
 > Dream Layer 在夜里把这些碎片(包括被扔掉的)随机配对、高温碰撞,早上给你 ≤3 条「观察 + 问题」。
