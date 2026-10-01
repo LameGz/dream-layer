@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <radialGradient id="halo" cx="0.70" cy="0.22" r="0.55">
+      <stop offset="0%" stop-color="#a9c6d4" stop-opacity="0.10"/>
+      <stop offset="100%" stop-color="#a9c6d4" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="moon" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#c6dae6"/>
+      <stop offset="100%" stop-color="#8fb3c2"/>
+    </linearGradient>
+    <radialGradient id="pupilGlow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#d9a878" stop-opacity="0.30"/>
+      <stop offset="100%" stop-color="#d9a878" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- 夜:圆角方形底 -->
+  <rect x="0" y="0" width="1024" height="1024" rx="196" fill="#0a0e15"/>
+  <rect x="0" y="0" width="1024" height="1024" rx="196" fill="url(#halo)"/>
+
+  <!-- 星点:偶尔,从不成群 -->
+  <circle cx="742" cy="236" r="3.2" fill="#e9e4d6" opacity="0.85"/>
+  <circle cx="838" cy="364" r="2" fill="#e9e4d6" opacity="0.5"/>
+  <circle cx="212" cy="182" r="2.4" fill="#e9e4d6" opacity="0.6"/>
+
+  <!-- D = 月牙(月亮)+ 瞳孔(太阳):字母与图形同体 -->
+  <path d="M 288 200
+           A 300 300 0 1 0 288 800
+           A 340 340 0 0 1 288 200 Z"
+        fill="url(#moon)"/>
+  <circle cx="330" cy="500" r="118" fill="url(#pupilGlow)"/>
+  <circle cx="330" cy="500" r="42" fill="#d9a878"/>
+  <circle cx="318" cy="488" r="10" fill="#e9e4d6" opacity="0.85"/>
+
+  <!-- REAM:小字跟随 D 的基线,月白,像标题 -->
+  <text x="470" y="545"
+        font-family="'JetBrains Mono','Consolas','Courier New',monospace"
+        font-size="128" letter-spacing="6" fill="#dfe9ee" opacity="0.92">REAM</text>
+
+  <!-- LAYER:收影,小一号,低透明度,与 REAM 左对齐 -->
+  <text x="478" y="690"
+        font-family="'JetBrains Mono','Consolas','Courier New',monospace"
+        font-size="84" letter-spacing="16" fill="#a9c6d4" opacity="0.48">LAYER</text>
+</svg>
