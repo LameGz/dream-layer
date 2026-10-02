@@ -51,14 +51,18 @@ a:active{transform:scale(.98)}
 .site-head nav a{font-size:15px;color:var(--lb-3);transition:color .22s var(--ease)}
 .site-head nav a:hover{color:var(--lb-1)}
 
-/* ===== Hero:碟片轮播 ===== */
+/* ===== Hero:海上生明月背景 + 碟片轮播 ===== */
 .hero-vinyl{position:relative;min-height:calc(100vh - 84px);display:flex;flex-direction:column;
-  justify-content:center;overflow:hidden;padding:8px 0 40px}
+  justify-content:center;overflow:hidden;padding:8px 0 40px;
+  background:
+    linear-gradient(180deg, rgba(7,7,8,.88) 0%, rgba(7,7,8,.42) 34%, rgba(7,7,8,.30) 62%, rgba(7,7,8,.92) 100%),
+    url("covers/seamoon.png") center 30%/cover no-repeat,
+    #070708}
 .vinyl-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4vh}
 .vh-eyebrow{font-size:11px;letter-spacing:.3em;color:var(--lb-3)}
 .vh-hint{font-size:11px;letter-spacing:.14em;color:var(--lb-3)}
-.vinyl-stage{position:relative;height:min(520px,62vh);outline:none;perspective:1600px}
-.disc{position:absolute;left:50%;top:50%;width:min(280px,58vw);aspect-ratio:280/360;
+.vinyl-stage{position:relative;height:min(560px,64vh);outline:none;perspective:1500px}
+.disc{position:absolute;left:50%;top:50%;width:min(330px,66vw);aspect-ratio:280/360;
   display:flex;flex-direction:column;gap:10px;padding:16px 16px 14px;
   background:var(--bg-2);border:1px solid var(--sep-strong);border-radius:18px;
   transform-style:preserve-3d;will-change:transform;cursor:pointer;text-decoration:none;color:inherit}
@@ -69,6 +73,8 @@ a:active{transform:scale(.98)}
 .disc .d-name{font-size:19px;font-weight:600;letter-spacing:-.01em;color:var(--lb-1)}
 .disc .d-go{font-size:11.5px;color:var(--lb-3);transition:color .25s}
 .disc:hover .d-go{color:var(--accent)}
+.disc-soon .d-name.dim{color:var(--lb-3)}
+.disc-soon{border-style:dashed;background:rgba(14,14,17,.55);backdrop-filter:blur(4px)}
 .vinyl-dots{display:flex;justify-content:center;gap:10px;margin-top:4vh}
 .vinyl-dots i{width:6px;height:6px;border-radius:50%;background:var(--lb-3);opacity:.4;transition:all .3s}
 .vinyl-dots i.on{opacity:1;background:var(--accent);transform:scale(1.25)}
@@ -226,6 +232,18 @@ footer{border-top:1px solid var(--sep);padding:28px var(--gutter) 40px;
         <span class="d-name">CameraSync</span>
         <span class="d-go mono">进入 ↗</span>
       </a>
+      <a class="disc disc-soon" href="#works" role="option" aria-label="下一张唱片,敬请期待">
+        <span class="cover cover-soon" aria-hidden="true">
+          <svg viewBox="0 0 1024 1024"><rect width="1024" height="1024" fill="#0d1420"/>
+            <circle cx="512" cy="452" r="150" fill="none" stroke="#3a4a63" stroke-width="3" stroke-dasharray="10 12"/>
+            <circle cx="512" cy="452" r="16" fill="#3a4a63"/>
+            <path d="M 512 660 l 0 44 m -14 -30 l 14 30 l 14 -30" stroke="#d4a574" stroke-width="4" fill="none" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <span class="d-cat mono">NEXT · 敬请期待</span>
+        <span class="d-name dim">下一张唱片</span>
+        <span class="d-go mono">正在录制 ♪</span>
+      </a>
     </div>
 
     <div class="vinyl-dots" id="vinylDots" aria-hidden="true"></div>
@@ -370,13 +388,15 @@ footer{border-top:1px solid var(--sep);padding:28px var(--gutter) 40px;
   var N=discs.length,cur=0;
   var isMobile=matchMedia("(max-width:820px)").matches;
 
-  /* 每个偏移量的落位:居中最大,两侧退后缩小旋转(唱片架景深感) */
+  /* 每个偏移量的落位:居中最大,两侧大幅倾斜退后(唱片斜插架上的景深) */
   function spot(off){
     var a=Math.abs(off),s=Math.sign(off)||1;
     if(isMobile){
-      return {x:off*62,y:a*16,z:-a*180,rotY:s*off*0+ (s*a*14),scale:Math.max(.6,1-a*.14),alpha:a>2.4?0:1-a*.32};
+      return {x:off*60,y:a*14,z:-a*170,rotY:s*Math.min(a*24,44),rotZ:s*Math.min(a*3,6),
+              scale:Math.max(.58,1-a*.14),alpha:a>2.4?0:1-a*.3};
     }
-    return {x:off*46,y:a*10,z:-a*260,rotY:s*Math.min(a*18,36),scale:Math.max(.62,1-a*.13),alpha:a>2.4?0:1-a*.34};
+    return {x:off*44,y:a*8,z:-a*280,rotY:s*Math.min(a*34,58),rotZ:s*Math.min(a*3.5,7),
+            scale:Math.max(.58,1-a*.13),alpha:a>2.4?0:1-a*.34};
   }
 
   /* dots */
@@ -393,12 +413,11 @@ footer{border-top:1px solid var(--sep);padding:28px var(--gutter) 40px;
         var off=i-cur,s=spot(off);
         gsap.to(el,{
           xPercent:-50,yPercent:-50,
-          x:s.x+"%",y:s.y,z:s.z,rotationY:s.rotY,
+          x:s.x+"%",y:s.y,z:s.z,rotationY:s.rotY,rotationZ:s.rotZ,
           scale:s.scale,autoAlpha:s.alpha,
           duration:animate?.75:0,ease:"power3.out",overwrite:"auto"
         });
         el.style.zIndex=N-Math.abs(off);
-        el.style.pointerEvents=off===0?"auto":"auto";
       });
       markDots();
     }
