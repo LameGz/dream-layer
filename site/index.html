@@ -83,12 +83,10 @@ a:active{transform:scale(.98)}
 .corner{position:absolute;z-index:4;max-width:330px}
 .corner .c-label{font-family:var(--mono);font-size:11px;letter-spacing:.28em;
   color:var(--lb-3);margin-bottom:12px}
-.corner p{font-size:15px;line-height:1.9;color:var(--lb-2)}
 .corner .c-links{list-style:none;display:flex;flex-direction:column;gap:2px}
 .corner .c-links a{display:inline-block;padding:7px 0;font-size:15px;color:var(--lb-2);
   transition:color .25s var(--ease)}
 .corner .c-links a:hover{color:var(--accent)}
-.corner.tr{top:96px;right:var(--gutter)}
 .corner.br{bottom:44px;right:var(--gutter)}
 .scroll-hint{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);
   font-family:var(--mono);font-size:10px;letter-spacing:.34em;color:var(--lb-3)}
@@ -198,11 +196,6 @@ footer{border-top:1px solid var(--sep);padding:28px var(--gutter) 40px;
 <main>
 
   <section class="hero-folder" id="top">
-
-    <div class="corner tr">
-      <div class="c-label">概述 · ABOUT</div>
-      <p>造 agent 的夜间与记忆系统。相信执行越自动,人越需要一个不帮做事、只帮看东西的观察者——第一个作品已经在夜里做梦了,后面还会有。</p>
-    </div>
 
     <div class="folder-stage" id="folderStage" tabindex="0" role="group"
          aria-label="作品文件夹:悬停或轻触展开">
@@ -415,8 +408,7 @@ footer{border-top:1px solid var(--sep);padding:28px var(--gutter) 40px;
 
       /* --- 页面入场:角落淡入 + 文件夹落座 --- */
       var intro=gsap.timeline({defaults:{ease:"power3.out"}});
-      intro.from(".corner.tr",{autoAlpha:0,y:24,duration:.8},.2)
-           .from(".corner.br",{autoAlpha:0,y:24,duration:.8},"<.1")
+      intro.from(".corner.br",{autoAlpha:0,y:24,duration:.8},.2)
            .from(folderSvg,{autoAlpha:0,y:-46,scale:.92,duration:.9,ease:"back.out(1.4)"},"<")
            .from(".scroll-hint",{autoAlpha:0,duration:.6},"-=.3");
 

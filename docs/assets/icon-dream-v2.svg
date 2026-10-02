@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900">
+  <defs>
+    <linearGradient id="moonBody" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#2c4468"/>
+      <stop offset="60%" stop-color="#1a2f4e"/>
+      <stop offset="100%" stop-color="#101f38"/>
+    </linearGradient>
+    <radialGradient id="sunGlow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#f2c078" stop-opacity="0.95"/>
+      <stop offset="45%" stop-color="#e8b76a" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#e8b76a" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="dStroke" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#22385c"/>
+      <stop offset="100%" stop-color="#16263f"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 轨道细弧:斜穿 D 的肚子(参考图的星环) -->
+  <path d="M 150 700 C 430 590, 700 470, 960 330"
+        fill="none" stroke="#1b2f4b" stroke-width="3" opacity="0.28"/>
+  <circle cx="960" cy="330" r="5" fill="#1b2f4b" opacity="0.45"/>
+
+  <!-- 大写 D:书法两笔 -->
+  <!-- 竖笔:叶片形,上下微尖 -->
+  <path d="M 268 158
+           C 280 330, 280 590, 268 762
+           L 236 762
+           C 248 590, 248 330, 236 158 Z"
+        fill="url(#dStroke)"/>
+  <!-- 弧笔:向右凸的粗弧,本身就是一弯月牙形笔画 -->
+  <path d="M 252 158
+           C 560 158, 664 330, 664 460
+           C 664 590, 560 762, 252 762
+           L 252 706
+           C 500 706, 590 576, 590 460
+           C 590 344, 500 214, 252 214 Z"
+        fill="url(#dStroke)"/>
+
+  <!-- 金色光晕:从月亮右后方透出(日出) -->
+  <circle cx="530" cy="400" r="185" fill="url(#sunGlow)"/>
+
+  <!-- 月亮:肚子里的深蓝星球,左暗右亮 -->
+  <circle cx="430" cy="460" r="138" fill="url(#moonBody)"/>
+  <!-- 环形山:几个小圆斑 -->
+  <circle cx="392" cy="418" r="16" fill="#0e1d34" opacity="0.55"/>
+  <circle cx="452" cy="486" r="11" fill="#0e1d34" opacity="0.45"/>
+  <circle cx="408" cy="512" r="7" fill="#0e1d34" opacity="0.4"/>
+  <circle cx="470" cy="420" r="6" fill="#3b5a82" opacity="0.5"/>
+  <!-- 暗面:左侧叠一弯更深的夜,形成月牙的阴阳 -->
+  <path d="M 430 322
+           A 138 138 0 1 0 430 598
+           A 168 168 0 0 1 430 322 Z"
+        fill="#0b1728" opacity="0.72"/>
+
+  <!-- 琥珀瞳孔:月亮右缘的光点(太阳的心脏) -->
+  <circle cx="522" cy="402" r="21" fill="#eab927"/>
+  <circle cx="522" cy="402" r="13" fill="#f2c078"/>
+
+  <!-- reamlayer:手写连笔,深蓝,与 D 基线对齐 -->
+  <text x="700" y="560"
+        font-family="'Segoe Script','Brush Script MT','Lucida Handwriting','Comic Sans MS',cursive"
+        font-size="168" font-style="italic" letter-spacing="2"
+        fill="#1b2f4b">reamlayer</text>
+</svg>
