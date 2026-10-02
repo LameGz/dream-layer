@@ -41,8 +41,14 @@ a{color:inherit;text-decoration:none}
 .back-disc:hover{color:var(--accent);border-color:rgba(212,165,116,.4)}
 .back-disc:active{transform:scale(.95)}
 
-/* ===== 页头 ===== */
-header.top{padding:14vh 0 6vh}
+/* ===== 页头(可配 hero 背景图:body[data-hero] 指定,叠暗保读) ===== */
+header.top{position:relative;padding:calc(10vh + 88px) 0 6vh;min-height:64vh;
+  display:flex;flex-direction:column;justify-content:flex-end;
+  background:
+    linear-gradient(180deg, rgba(7,7,8,.9) 0%, rgba(7,7,8,.5) 32%, rgba(7,7,8,.32) 66%, var(--bg-1) 100%),
+    var(--hero-img) center 34%/cover no-repeat;
+  border-bottom:1px solid var(--sep)}
+body:not([data-hero]) header.top{padding:14vh 0 6vh;min-height:0;background:none;border-bottom:none}
 .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.3em;color:var(--lb-3);margin-bottom:4vh}
 h1{font-size:clamp(38px,5.4vw,68px);font-weight:600;line-height:1.16;letter-spacing:-.015em;color:var(--lb-1)}
 .lede{margin-top:3.4vh;color:var(--lb-3);font-size:17px;max-width:36em;line-height:1.9}
