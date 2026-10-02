@@ -51,53 +51,35 @@ a:active{transform:scale(.98)}
 .site-head nav a{font-size:15px;color:var(--lb-3);transition:color .22s var(--ease)}
 .site-head nav a:hover{color:var(--lb-1)}
 
-/* ===== Hero:Q 版文件夹,悬停展开作品卡 ===== */
-.hero-folder{position:relative;min-height:calc(100vh - 84px);display:grid;
-  place-items:center;padding:16px var(--gutter) 40px}
-.folder-stage{position:relative;width:min(430px,88vw);height:min(500px,72vh);
-  display:flex;align-items:flex-end;justify-content:center;cursor:pointer;outline:none}
-.folder-stage .folder-svg{width:min(320px,72vw);overflow:visible;
-  transform-origin:50% 90%}
-.folder-lid{transform-box:fill-box;transform-origin:50% 100%}
-
-/* 作品卡:位置与开合全权交给 GSAP(含 reduced-motion 降级);CSS 只管长相 */
-.wcard{position:absolute;left:50%;bottom:132px;width:196px;padding:18px 18px 16px;
-  border-radius:18px;background:var(--bg-2);border:1px solid var(--sep-strong);
-  display:flex;flex-direction:column;gap:6px;opacity:0;pointer-events:none;
-  will-change:transform,opacity}
-.wcard .wc-cat{font-family:var(--mono);font-size:11px;color:var(--lb-3);letter-spacing:.08em}
-.wcard .wc-name{font-size:16.5px;font-weight:600;letter-spacing:-.01em;color:var(--lb-1)}
-.wcard .wc-go{font-family:var(--mono);font-size:11.5px;color:var(--lb-3);transition:color .25s}
-.wcard:hover .wc-go{color:var(--accent)}
-.wcard:hover{border-color:rgba(212,165,116,.45)}
-.folder-stage:hover .wcard,.folder-stage.open .wcard{pointer-events:auto}
-
-/* 主卡(Dream Layer):最大居中,产品阴影只给它一处 */
-.w-dream{width:236px;padding:22px 20px 18px;z-index:2;
-  box-shadow:rgba(0,0,0,.35) 3px 5px 30px 0}
-.w-dream .wc-name{font-size:18px}
-.w-dream svg.moonmark{width:60px;height:auto;margin-bottom:12px;
-  filter:drop-shadow(0 0 20px rgba(169,198,212,.22))}
-
-/* 角落:右上概述 / 右下链接 */
-.corner{position:absolute;z-index:4;max-width:330px}
-.corner .c-label{font-family:var(--mono);font-size:11px;letter-spacing:.28em;
-  color:var(--lb-3);margin-bottom:12px}
-.corner .c-links{list-style:none;display:flex;flex-direction:column;gap:2px}
-.corner .c-links a{display:inline-block;padding:7px 0;font-size:15px;color:var(--lb-2);
-  transition:color .25s var(--ease)}
-.corner .c-links a:hover{color:var(--accent)}
+/* ===== Hero:碟片轮播 ===== */
+.hero-vinyl{position:relative;min-height:calc(100vh - 84px);display:flex;flex-direction:column;
+  justify-content:center;overflow:hidden;padding:8px 0 40px}
+.vinyl-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4vh}
+.vh-eyebrow{font-size:11px;letter-spacing:.3em;color:var(--lb-3)}
+.vh-hint{font-size:11px;letter-spacing:.14em;color:var(--lb-3)}
+.vinyl-stage{position:relative;height:min(520px,62vh);outline:none;perspective:1600px}
+.disc{position:absolute;left:50%;top:50%;width:min(280px,58vw);aspect-ratio:280/360;
+  display:flex;flex-direction:column;gap:10px;padding:16px 16px 14px;
+  background:var(--bg-2);border:1px solid var(--sep-strong);border-radius:18px;
+  transform-style:preserve-3d;will-change:transform;cursor:pointer;text-decoration:none;color:inherit}
+.disc .cover{display:block;width:100%;aspect-ratio:1;border-radius:12px;overflow:hidden;
+  background:#0a0e15}
+.disc .cover svg{width:100%;height:100%;display:block}
+.disc .d-cat{font-size:11px;letter-spacing:.1em;color:var(--lb-3)}
+.disc .d-name{font-size:19px;font-weight:600;letter-spacing:-.01em;color:var(--lb-1)}
+.disc .d-go{font-size:11.5px;color:var(--lb-3);transition:color .25s}
+.disc:hover .d-go{color:var(--accent)}
+.vinyl-dots{display:flex;justify-content:center;gap:10px;margin-top:4vh}
+.vinyl-dots i{width:6px;height:6px;border-radius:50%;background:var(--lb-3);opacity:.4;transition:all .3s}
+.vinyl-dots i.on{opacity:1;background:var(--accent);transform:scale(1.25)}
+@media (max-width:820px){
+  .hero-vinyl{min-height:auto;padding:6px 0 28px}
+  .vinyl-stage{height:min(500px,60vh)}
+  .disc{width:min(240px,64vw)}
+}
 .corner.br{bottom:44px;right:var(--gutter)}
 .scroll-hint{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);
   font-family:var(--mono);font-size:10px;letter-spacing:.34em;color:var(--lb-3)}
-
-@media (max-width:820px){
-  .hero-folder{display:flex;flex-direction:column;gap:26px;min-height:auto;
-    padding:12px var(--gutter) 28px}
-  .corner{position:static;max-width:none}
-  .folder-stage{height:620px;align-items:flex-end}
-  .scroll-hint{display:none}
-}
 
 /* 滚动渐入(章节佐证):JS 加 .in,失败时不隐藏内容 */
 body.js .work,body.js .cell,body.js .else-row{opacity:0;transform:translateY(14px);
@@ -195,55 +177,67 @@ footer{border-top:1px solid var(--sep);padding:28px var(--gutter) 40px;
 
 <main>
 
-  <section class="hero-folder" id="top">
-
-    <div class="folder-stage" id="folderStage" tabindex="0" role="group"
-         aria-label="作品文件夹:悬停或轻触展开">
-      <a class="wcard w-dream" href="works/dream-layer/" style="view-transition-name:wl-dream">
-        <svg class="moonmark" viewBox="0 0 1024 1024" aria-hidden="true">
-          <path d="M 460 212 A 300 300 0 1 0 460 812 A 340 340 0 0 1 460 212 Z" fill="#8fb3c2"/>
-          <circle cx="500" cy="512" r="42" fill="#d9a878"/>
-        </svg>
-        <span class="wc-cat">开源 · agent 夜间系统</span>
-        <span class="wc-name">Dream Layer</span>
-        <span class="wc-go">进入 ↘</span>
-      </a>
-      <a class="wcard w-syn" href="works/synapse-graph-skills/" style="view-transition-name:wl-synapse">
-        <span class="wc-cat">Claude Code 技能</span>
-        <span class="wc-name">Synapse Graph Skills</span>
-        <span class="wc-go">进入 ↗</span>
-      </a>
-      <a class="wcard w-obs" href="works/obsidian-base-builder/" style="view-transition-name:wl-obsidian">
-        <span class="wc-cat">知识库手册 · PARA</span>
-        <span class="wc-name">Obsidian Base Builder</span>
-        <span class="wc-go">进入 ↗</span>
-      </a>
-      <a class="wcard w-cam" href="works/camerasync/" style="view-transition-name:wl-camera">
-        <span class="wc-cat">桌面小工具</span>
-        <span class="wc-name">CameraSync</span>
-        <span class="wc-go">进入 ↗</span>
-      </a>
-      <svg class="folder-svg" viewBox="0 0 320 250" aria-hidden="true">
-        <defs>
-          <linearGradient id="folderFront" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#28405a"/>
-            <stop offset="100%" stop-color="#1a2a3c"/>
-          </linearGradient>
-        </defs>
-        <ellipse cx="160" cy="232" rx="120" ry="14" fill="#000" opacity="0.38"/>
-        <rect x="42" y="66" width="236" height="152" rx="18" fill="#141f2b"/>
-        <rect x="42" y="46" width="96" height="38" rx="13" fill="#141f2b"/>
-        <g class="folder-lid">
-          <rect x="42" y="96" width="236" height="122" rx="18" fill="url(#folderFront)"/>
-          <rect x="42" y="96" width="236" height="14" rx="7" fill="#e9e4d6" opacity="0.07"/>
-          <g transform="translate(160,150) rotate(-9)">
-            <rect x="-42" y="-46" width="84" height="92" rx="10" fill="#e9e4d6" opacity="0.94"/>
-            <path d="M -2 -34 A 26 26 0 1 0 -2 22 A 30 30 0 0 1 -2 -34 Z" fill="#8fb3c2"/>
-            <circle cx="3" cy="-6" r="4.6" fill="#d9a878"/>
-          </g>
-        </g>
-      </svg>
+  <section class="hero-vinyl" id="top">
+    <div class="vinyl-head wrap">
+      <p class="vh-eyebrow mono">作品集 · VINYL SHELF</p>
+      <p class="vh-hint mono">← 拖动 / 滚轮切换 →</p>
     </div>
+
+    <div class="vinyl-stage" id="vinylStage" tabindex="0" role="listbox" aria-label="作品碟片架">
+      <a class="disc" href="works/dream-layer/" style="view-transition-name:wl-dream" role="option">
+        <span class="cover cover-dream" aria-hidden="true">
+          <svg viewBox="0 0 1024 1024"><rect width="1024" height="1024" fill="#0a0e15"/>
+            <path d="M 460 212 A 300 300 0 1 0 460 812 A 340 340 0 0 1 460 212 Z" fill="#8fb3c2"/>
+            <circle cx="500" cy="512" r="42" fill="#d9a878"/>
+          </svg>
+        </span>
+        <span class="d-cat mono">开源 · agent 夜间系统</span>
+        <span class="d-name">Dream Layer</span>
+        <span class="d-go mono">进入 ↘</span>
+      </a>
+      <a class="disc" href="works/synapse-graph-skills/" style="view-transition-name:wl-synapse" role="option">
+        <span class="cover cover-syn" aria-hidden="true">
+          <svg viewBox="0 0 1024 1024"><rect width="1024" height="1024" fill="#0a0e15"/>
+            <g stroke="#8fb3c2" stroke-width="3" opacity=".8">
+              <path d="M 380 340 L 560 260 L 690 380 M 380 340 L 480 520 M 560 260 L 480 520 M 690 380 L 480 520 M 690 380 L 640 610 M 480 520 L 640 610" fill="none"/>
+            </g>
+            <circle cx="380" cy="340" r="16" fill="#8fb3c2"/><circle cx="560" cy="260" r="20" fill="#d9a878"/>
+            <circle cx="690" cy="380" r="16" fill="#8fb3c2"/><circle cx="480" cy="520" r="14" fill="#8fb3c2"/>
+            <circle cx="640" cy="610" r="12" fill="#8fb3c2"/>
+          </svg>
+        </span>
+        <span class="d-cat mono">Claude Code 技能</span>
+        <span class="d-name">Synapse Graph Skills</span>
+        <span class="d-go mono">进入 ↗</span>
+      </a>
+      <a class="disc" href="works/obsidian-base-builder/" style="view-transition-name:wl-obsidian" role="option">
+        <span class="cover cover-obs" aria-hidden="true">
+          <svg viewBox="0 0 1024 1024"><rect width="1024" height="1024" fill="#0a0e15"/>
+            <rect x="300" y="380" width="420" height="290" rx="20" fill="none" stroke="#8fb3c2" stroke-width="4"/>
+            <rect x="300" y="330" width="160" height="60" rx="16" fill="none" stroke="#8fb3c2" stroke-width="4"/>
+            <path d="M 340 460 L 680 460 M 340 530 L 680 530 M 340 600 L 560 600" stroke="#d9a878" stroke-width="4" opacity=".75"/>
+          </svg>
+        </span>
+        <span class="d-cat mono">知识库手册 · PARA</span>
+        <span class="d-name">Obsidian Base Builder</span>
+        <span class="d-go mono">进入 ↗</span>
+      </a>
+      <a class="disc" href="works/camerasync/" style="view-transition-name:wl-camera" role="option">
+        <span class="cover cover-cam" aria-hidden="true">
+          <svg viewBox="0 0 1024 1024"><rect width="1024" height="1024" fill="#0a0e15"/>
+            <rect x="290" y="390" width="440" height="280" rx="24" fill="none" stroke="#8fb3c2" stroke-width="5"/>
+            <circle cx="510" cy="530" r="90" fill="none" stroke="#d9a878" stroke-width="5"/>
+            <circle cx="510" cy="530" r="46" fill="none" stroke="#8fb3c2" stroke-width="4" opacity=".8"/>
+            <circle cx="660" cy="440" r="14" fill="#d9a878"/>
+          </svg>
+        </span>
+        <span class="d-cat mono">桌面小工具</span>
+        <span class="d-name">CameraSync</span>
+        <span class="d-go mono">进入 ↗</span>
+      </a>
+    </div>
+
+    <div class="vinyl-dots" id="vinylDots" aria-hidden="true"></div>
 
     <div class="corner br">
       <div class="c-label">链接 · LINKS</div>
@@ -377,119 +371,96 @@ footer{border-top:1px solid var(--sep);padding:28px var(--gutter) 40px;
 
   document.body.classList.add("js");
 
-  /* ---------- GSAP:文件夹主界面动画 ---------- */
-  var stage=document.getElementById("folderStage");
-  var cards=stage.querySelectorAll(".wcard");
-  var lid=document.querySelector(".folder-lid");
-  var folderSvg=document.querySelector(".folder-svg");
+  /* ---------- GSAP:碟片轮播 ---------- */
+  var stage=document.getElementById("vinylStage");
+  var discs=Array.from(stage.querySelectorAll(".disc"));
+  var dotsBox=document.getElementById("vinylDots");
   var hasGsap=typeof gsap!=="undefined";
+  var N=discs.length,cur=0;
   var isMobile=matchMedia("(max-width:820px)").matches;
 
-  /* 每张卡的落点(桌面:弧形;移动:2×2)。xPercent 相对自身宽,配合 left:50% 定位 */
-  var SPOTS = isMobile ? {
-    dream:{xP:-103,y:-330,rot:0},
-    syn:{xP:3,y:-330,rot:0},
-    obs:{xP:-103,y:-172,rot:0},
-    cam:{xP:3,y:-172,rot:0}
-  } : {
-    dream:{xP:-50,y:-292,rot:0},
-    syn:{xP:-214,y:-164,rot:-9},
-    obs:{xP:132,y:-186,rot:6},
-    cam:{xP:226,y:-36,rot:12}
-  };
+  /* 每个偏移量的落位:居中最大,两侧退后缩小旋转(唱片架景深感) */
+  function spot(off){
+    var a=Math.abs(off),s=Math.sign(off)||1;
+    if(isMobile){
+      return {x:off*62,y:a*16,z:-a*180,rotY:s*off*0+ (s*a*14),scale:Math.max(.6,1-a*.14),alpha:a>2.4?0:1-a*.32};
+    }
+    return {x:off*46,y:a*10,z:-a*260,rotY:s*Math.min(a*18,36),scale:Math.max(.62,1-a*.13),alpha:a>2.4?0:1-a*.34};
+  }
+
+  /* dots */
+  discs.forEach(function(_,i){
+    var d=document.createElement("i");if(i===0)d.className="on";dotsBox.appendChild(d);
+  });
+  var dots=Array.from(dotsBox.children);
+  function markDots(){dots.forEach(function(d,i){d.classList.toggle("on",i===cur)})}
 
   if(hasGsap){
-    var mm=gsap.matchMedia();
-
-    mm.add("(prefers-reduced-motion: no-preference)", function(){
-      /* --- 初始状态:卡片在文件夹里,盖子闭合 --- */
-      gsap.set(cards,{xPercent:-50,y:60,rotation:0,autoAlpha:0});
-      gsap.set(lid,{rotationX:0,y:0});
-
-      /* --- 页面入场:角落淡入 + 文件夹落座 --- */
-      var intro=gsap.timeline({defaults:{ease:"power3.out"}});
-      intro.from(".corner.br",{autoAlpha:0,y:24,duration:.8},.2)
-           .from(folderSvg,{autoAlpha:0,y:-46,scale:.92,duration:.9,ease:"back.out(1.4)"},"<")
-           .from(".scroll-hint",{autoAlpha:0,duration:.6},"-=.3");
-
-      /* --- 待机呼吸:文件夹轻微摇晃(展开时暂停) --- */
-      var wiggle=gsap.to(folderSvg,{
-        rotation:-1.1,duration:2.1,yoyo:true,repeat:-1,
-        ease:"sine.inOut",transformOrigin:"50% 90%",paused:true
+    gsap.set(discs,{transformOrigin:"50% 50%",zIndex:function(i){return N-Math.abs(i)}});
+    function layout(animate){
+      discs.forEach(function(el,i){
+        var off=i-cur,s=spot(off);
+        gsap.to(el,{
+          xPercent:-50,yPercent:-50,
+          x:s.x+"%",y:s.y,z:s.z,rotationY:s.rotY,
+          scale:s.scale,autoAlpha:s.alpha,
+          duration:animate?.75:0,ease:"power3.out",overwrite:"auto"
+        });
+        el.style.zIndex=N-Math.abs(off);
+        el.style.pointerEvents=off===0?"auto":"auto";
       });
+      markDots();
+    }
+    function go(d){
+      var n=(cur+d+N)%N;
+      if(n===cur)return;cur=n;layout(true);
+    }
 
-      /* --- 开合状态机 --- */
-      var isOpen=false,busy=false;
-      function spotsOf(el){
-        var k=el.classList.contains("w-dream")?"dream":
-              el.classList.contains("w-syn")?"syn":
-              el.classList.contains("w-obs")?"obs":"cam";
-        return SPOTS[k];
-      }
-      function open(){
-        if(busy||isOpen)return;busy=true;isOpen=true;wiggle.pause();
-        var tl=gsap.timeline({defaults:{ease:"power3.out"},
-          onComplete:function(){busy=false}});
-        /* 盖子先掀 */
-        tl.to(lid,{rotationX:-24,y:-8,duration:.42,ease:"power2.out"})
-          /* 卡片依次弹出:back.out 过冲,像被弹出来的实体卡 */
-          .to(cards,{
-            xPercent:function(i,el){return spotsOf(el).xP},
-            y:function(i,el){return spotsOf(el).y},
-            rotation:function(i,el){return spotsOf(el).rot},
-            autoAlpha:1,duration:.6,ease:"back.out(1.7)",
-            stagger:{each:.07,from:"start"}
-          },"-=.18");
-        gsap.to(wiggle,{timeScale:0,duration:.2});
-      }
-      function close(){
-        if(busy||!isOpen)return;busy=true;isOpen=false;
-        var tl=gsap.timeline({defaults:{ease:"power2.in"},
-          onComplete:function(){busy=false;wiggle.play(0)}});
-        tl.to(cards,{
-            xPercent:-50,y:60,rotation:0,autoAlpha:0,
-            duration:.34,stagger:{each:.04,from:"end"}
-          })
-          .to(lid,{rotationX:0,y:0,duration:.36,ease:"power2.out"},"-=.1");
-      }
-      /* 桌面 hover 开合;触屏一律点击 */
-      if(!isMobile){
-        stage.addEventListener("mouseenter",open);
-        stage.addEventListener("mouseleave",close);
-      }
-      stage.addEventListener("click",function(e){
-        if(e.target.closest(".wcard"))return;
-        isOpen?close():open();
-      });
-      stage.addEventListener("keydown",function(e){
-        if(e.key==="Enter"||e.key===" "){e.preventDefault();isOpen?close():open()}
-      });
-      document.addEventListener("click",function(e){
-        if(!e.target.closest("#folderStage"))close();
-      });
+    /* 入场:碟片从右依次飞入落位 */
+    gsap.set(discs,{xPercent:-50,yPercent:-50});
+    layout(false);
+    var intro=gsap.timeline({defaults:{ease:"power3.out"}});
+    intro.from(".vinyl-head",{autoAlpha:0,y:-18,duration:.6},.1)
+         .from(discs,{x:"+=60%",autoAlpha:0,duration:.9,stagger:.12},.2)
+         .from(".corner.br",{autoAlpha:0,y:24,duration:.8},"-=.4")
+         .from(".scroll-hint",{autoAlpha:0,duration:.6},"-=.3");
 
-      return function(){ mm && gsap.set([cards,lid,folderSvg],{clearProps:"all"}); };
+    /* 交互:滚轮 / 拖动 / 键盘 / 点两侧碟 */
+    var wheelLock=false;
+    stage.addEventListener("wheel",function(e){
+      e.preventDefault();
+      if(wheelLock)return;wheelLock=true;setTimeout(function(){wheelLock=false},420);
+      go(e.deltaY>0?1:-1);
+    },{passive:false});
+    var dragX=null;
+    stage.addEventListener("pointerdown",function(e){dragX=e.clientX});
+    stage.addEventListener("pointerup",function(e){
+      if(dragX===null)return;
+      var dx=e.clientX-dragX;dragX=null;
+      if(Math.abs(dx)>36)go(dx<0?1:-1);
+    });
+    stage.addEventListener("keydown",function(e){
+      if(e.key==="ArrowRight"){e.preventDefault();go(1)}
+      if(e.key==="ArrowLeft"){e.preventDefault();go(-1)}
+    });
+    discs.forEach(function(el,i){
+      el.addEventListener("click",function(e){
+        if(i!==cur){e.preventDefault();cur=i;layout(true)}
+        /* 当前碟:放行 href,跨页 VT 接管 */
+      });
     });
 
-    /* reduced-motion:一次性显示,不做动画(卡片直接摊开可点) */
-    mm.add("(prefers-reduced-motion: reduce)", function(){
-      gsap.set(cards,{xPercent:function(i,el){return spotsOf(el).xP},
-        y:function(i,el){return spotsOf(el).y},
-        rotation:function(i,el){return spotsOf(el).rot},autoAlpha:1});
-      gsap.set(lid,{rotationX:-24,y:-8});
-    });
+    if(matchMedia("(prefers-reduced-motion: reduce)").matches){
+      gsap.globalTimeline.clear();
+      layout(false);
+    }
   }else{
-    /* 无 GSAP(CDN 失败):CSS 兜底——卡片摊开可点 */
-    document.querySelectorAll(".wcard").forEach(function(el){
-      var k=el.classList.contains("w-dream")?"dream":
-            el.classList.contains("w-syn")?"syn":
-            el.classList.contains("w-obs")?"obs":"cam";
-      var s=SPOTS[k];
-      el.style.transform="translate("+s.xP+"%,"+s.y+"px) rotate("+s.rot+"deg)";
-      el.style.opacity=1;
+    /* 无 GSAP:静态铺开,全可点 */
+    discs.forEach(function(el,i){
+      var s=spot(i-cur);
+      el.style.transform="translate(-50%,-50%) translate("+s.x+"%,"+s.y+"px) scale("+s.scale+")";
+      el.style.opacity=s.alpha;
     });
-    var l=document.querySelector(".folder-lid");
-    if(l)l.style.transform="rotateX(-24deg) translateY(-8px)";
   }
 
   /* ---------- 滚动渐入(章节佐证) ---------- */

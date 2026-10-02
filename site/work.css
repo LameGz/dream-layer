@@ -100,13 +100,17 @@ ul.rows li:last-child{border-bottom:none}
 .tail-link:hover{color:var(--lb-1)}
 
 /* 滚动渐入(JS 加 .in) */
-body.js section.blk,body.js .grid .card,body.js .steps .step,body.js .bars .er,
-body.js ul.rows li{opacity:0;transform:translateY(14px);
+/* 滚动渐入由 JS 控制:JS 给元素加 .will-reveal 才隐藏;IO 命中后换 .in 恢复。
+   IO 未就绪/失败时内容永不隐藏。 */
+body.js section.blk.will-reveal,body.js .grid .card.will-reveal,
+body.js .steps .step.will-reveal,body.js .bars .er.will-reveal,
+body.js ul.rows li.will-reveal{opacity:0;transform:translateY(14px);
   transition:opacity .7s var(--ease),transform .7s var(--ease)}
-body.js .in{opacity:1;transform:none}
+body.js section.blk.in,body.js .grid .card.in,body.js .steps .step.in,
+body.js .bars .er.in,body.js ul.rows li.in{opacity:1;transform:none}
 @media (prefers-reduced-motion:reduce){
   body.js section.blk,body.js .grid .card,body.js .steps .step,body.js .bars .er,
-  body.js ul.rows li{opacity:1;transform:none;transition:none}
+  body.js ul.rows li{opacity:1!important;transform:none!important;transition:none}
 }
 
 @media (max-width:820px){

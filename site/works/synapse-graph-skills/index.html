@@ -77,10 +77,10 @@ python adapters/install_adapter.py auto --project /path/to/project</div>
   document.body.classList.add("js");
   var io=new IntersectionObserver(function(es){
     es.forEach(function(en){
-      if(en.isIntersecting){en.target.classList.add("in");io.unobserve(en.target)}
+      if(en.isIntersecting){en.target.classList.remove("will-reveal");en.target.classList.add("in");io.unobserve(en.target)}
     });
   },{threshold:.1});
-  document.querySelectorAll("section.blk,.grid .card,.steps .step,.bars .er,ul.rows li").forEach(function(n,i){
+  document.querySelectorAll("section.blk,.grid .card,.steps .step,.bars .er,ul.rows li").forEach(function(n,i){n.classList.add("will-reveal");
     n.style.transitionDelay=(i%5)*60+"ms";io.observe(n);
   });
 })();

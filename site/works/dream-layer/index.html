@@ -112,6 +112,12 @@
   .pairing .frag{max-width:230px;font-size:12px}
   .tick{grid-template-columns:76px 1fr}
 }
+body.js .tick.will-reveal,body.js .pain.will-reveal,body.js .not.will-reveal,
+body.js .formula.will-reveal,body.js .term.will-reveal,body.js .manuscript.will-reveal{
+  opacity:0;transform:translateY(14px);
+  transition:opacity .7s var(--ease),transform .7s var(--ease)}
+body.js .tick.in,body.js .pain.in,body.js .not.in,body.js .formula.in,
+body.js .term.in,body.js .manuscript.in{opacity:1;transform:none}
 </style>
 </head>
 <body class="js">
@@ -370,10 +376,10 @@ var SHOWS=[
   document.body.classList.add("js");
   var io=new IntersectionObserver(function(es){
     es.forEach(function(en){
-      if(en.isIntersecting){en.target.classList.add("in");io.unobserve(en.target)}
+      if(en.isIntersecting){en.target.classList.remove("will-reveal");en.target.classList.add("in");io.unobserve(en.target)}
     });
   },{threshold:.1});
-  document.querySelectorAll("section.blk,.tick,.pain,.not,.formula,.term,.manuscript").forEach(function(n,i){
+  document.querySelectorAll("section.blk,.tick,.pain,.not,.formula,.term,.manuscript").forEach(function(n,i){n.classList.add("will-reveal");
     n.style.transitionDelay=(i%5)*60+"ms";io.observe(n);
   });
 })();
