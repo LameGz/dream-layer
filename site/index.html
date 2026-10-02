@@ -68,7 +68,7 @@ body{
   background:linear-gradient(to bottom,rgba(7,10,16,.85),transparent);
 }
 .top .mark{color:var(--dim)}
-.top .mark b{color:var(--ink);font-weight:500;letter-spacing:.2em}
+.top .mark b{color:var(--ink);font-weight:600;letter-spacing:.2em}
 .top .state::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;
   background:var(--amber);margin-right:9px;vertical-align:1px;
   animation:pulse 3.2s ease-in-out infinite}
@@ -80,7 +80,7 @@ section{padding:19vh 0}
 .kicker{font-family:var(--mono);font-size:11px;letter-spacing:.32em;color:var(--moon);
   display:flex;align-items:center;gap:16px;margin-bottom:6vh}
 .kicker::after{content:"";height:1px;width:72px;background:var(--line-strong)}
-h2{font-family:var(--disp);font-size:clamp(32px,4.2vw,48px);font-weight:500;line-height:1.6;letter-spacing:.04em;margin-bottom:7vh}
+h2{font-family:var(--disp);font-size:clamp(32px,4.2vw,48px);font-weight:600;line-height:1.2;letter-spacing:-.012em;margin-bottom:7vh}
 h2 em{font-style:normal;color:var(--amber)}
 .reveal{opacity:0;transform:translateY(16px);transition:opacity 1.3s ease,transform 1.3s cubic-bezier(.19,1,.22,1)}
 .reveal.in{opacity:1;transform:none}
@@ -89,7 +89,7 @@ h2 em{font-style:normal;color:var(--amber)}
 .hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding-top:14vh;position:relative}
 .hero .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.3em;color:var(--dim);margin-bottom:4.5vh}
 .hero .eyebrow i{font-style:normal;color:var(--amber)}
-h1{font-family:var(--disp);font-size:clamp(48px,7vw,92px);font-weight:500;line-height:1.5;letter-spacing:.03em;max-width:14em}
+h1{font-family:var(--disp);font-size:clamp(48px,7vw,92px);font-weight:600;line-height:1.16;letter-spacing:-.015em;max-width:14em}
 h1 .under{position:relative;white-space:nowrap}
 h1 .under::after{content:"";position:absolute;left:2%;right:2%;bottom:.04em;height:1px;
   background:linear-gradient(to right,var(--amber),transparent)}
@@ -117,7 +117,7 @@ h1 .under::after{content:"";position:absolute;left:2%;right:2%;bottom:.04em;heig
   border-bottom:1px solid var(--line);padding:52px 0 58px}
 .pairing .frag{position:absolute;max-width:300px;padding:18px 20px 15px;
   border:1px solid var(--line-strong);background:rgba(11,15,23,.72);backdrop-filter:blur(6px);
-  border-radius:12px;font-size:13.5px;line-height:1.9;color:var(--dim)}
+  border-radius:18px;font-size:13.5px;line-height:1.9;color:var(--dim)}
 .pairing .frag .tag{font-family:var(--mono);font-size:10px;letter-spacing:.16em;display:block;margin-bottom:8px}
 .pairing .frag .ftext{display:block}
 .pairing .frag.swapping{opacity:0}
@@ -136,7 +136,7 @@ h1 .under::after{content:"";position:absolute;left:2%;right:2%;bottom:.04em;heig
 @keyframes blink{50%{opacity:0}}
 .pairing .verdict{position:absolute;right:0;top:-11px;font-family:var(--mono);font-size:10px;
   letter-spacing:.18em;color:var(--faint);background:var(--bg);padding:0 10px}
-.pairing .verdict b{color:var(--amber);font-weight:500}
+.pairing .verdict b{color:var(--amber);font-weight:600}
 
 /* ---------- 一夜:时间轴 ---------- */
 .night{display:grid;grid-template-columns:minmax(220px,.9fr) 2fr;gap:6vw;align-items:start}
@@ -149,7 +149,7 @@ h1 .under::after{content:"";position:absolute;left:2%;right:2%;bottom:.04em;heig
 .tick:first-child{border-top:1px solid var(--line)}
 .tick .at{font-family:var(--mono);font-size:15px;color:var(--moon);letter-spacing:.08em;padding-top:.5em}
 .tick .at i{display:block;font-style:normal;font-size:10px;color:var(--faint);letter-spacing:.28em;margin-top:.8em}
-.tick h3{font-family:var(--disp);font-size:25px;font-weight:500;margin-bottom:1em;letter-spacing:.05em}
+.tick h3{font-family:var(--disp);font-size:25px;font-weight:600;margin-bottom:1em;letter-spacing:.05em}
 .tick p{color:var(--dim);font-size:16px;line-height:2.15;max-width:34em}
 .tick p b{color:var(--ink);font-weight:400}
 .tick .note{margin-top:1.4em;font-family:var(--mono);font-size:11px;color:var(--faint);letter-spacing:.1em;line-height:2}
@@ -157,7 +157,7 @@ h1 .under::after{content:"";position:absolute;left:2%;right:2%;bottom:.04em;heig
 
 /* journal 手稿卡 */
 .manuscript{margin:8vh 0 0;padding:34px 38px;border:1px solid var(--line-strong);
-  background:rgba(11,15,23,.6);position:relative;border-radius:14px}
+  background:rgba(11,15,23,.6);position:relative;border-radius:18px}
 .manuscript::before{content:"data/journal/2026-10-01.md";position:absolute;top:-9px;left:26px;
   font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--faint);background:var(--bg);padding:0 10px}
 .manuscript pre{font-family:var(--mono);font-size:12.5px;line-height:2.05;color:var(--dim);
@@ -174,11 +174,11 @@ h1 .under::after{content:"";position:absolute;left:2%;right:2%;bottom:.04em;heig
 .pain{padding:6vh 2.6vw 0 0;border-right:1px solid var(--line)}
 .pain:last-child{border-right:none}
 .pain .no{font-family:var(--mono);font-size:11px;color:var(--faint);letter-spacing:.2em}
-.pain h3{font-family:var(--disp);font-size:24px;font-weight:500;margin:1.4em 0 1em;letter-spacing:.06em}
+.pain h3{font-family:var(--disp);font-size:24px;font-weight:600;margin:1.4em 0 1em;letter-spacing:.06em}
 .pain p{color:var(--dim);font-size:15.5px;line-height:2.15}
 .pain p b{color:var(--ink);font-weight:400}
 .pain .foot{margin-top:2em;font-family:var(--mono);font-size:10.5px;color:var(--faint);letter-spacing:.12em}
-.punch{font-family:var(--disp);margin-top:10vh;font-size:clamp(24px,2.8vw,34px);line-height:2;max-width:24em;font-weight:500}
+.punch{font-family:var(--disp);margin-top:10vh;font-size:clamp(24px,2.8vw,34px);line-height:2;max-width:24em;font-weight:600}
 .punch .a{color:var(--amber)}
 .punch .m{color:var(--moon)}
 
@@ -186,7 +186,7 @@ h1 .under::after{content:"";position:absolute;left:2%;right:2%;bottom:.04em;heig
 .nots{max-width:900px}
 .not{display:grid;grid-template-columns:200px 1fr;gap:3vw;padding:5vh 0;border-bottom:1px solid var(--line);align-items:baseline}
 .not:first-child{border-top:1px solid var(--line)}
-.not .w{font-family:var(--disp);font-size:clamp(30px,3.4vw,42px);color:var(--ink);font-weight:500;letter-spacing:.08em;white-space:nowrap}
+.not .w{font-family:var(--disp);font-size:clamp(30px,3.4vw,42px);color:var(--ink);font-weight:600;letter-spacing:.08em;white-space:nowrap}
 .not .w::first-letter{color:var(--amber)}
 .not p{color:var(--dim);font-size:16px;line-height:2.15}
 .not p b{color:var(--ink);font-weight:400}
@@ -200,12 +200,12 @@ h1 .under::after{content:"";position:absolute;left:2%;right:2%;bottom:.04em;heig
 .lab .left p b{color:var(--ink);font-weight:400}
 .lab .left p+p{margin-top:2em}
 .formula{margin-top:5vh;padding:26px 30px;border:1px solid var(--line-strong);display:inline-block;
-  background:rgba(11,15,23,.6);border-radius:12px}
+  background:rgba(11,15,23,.6);border-radius:18px}
 .formula .f{font-family:var(--mono);font-size:13.5px;color:var(--ink);letter-spacing:.04em;line-height:2.2}
 .formula .f .m{color:var(--moon)}
 .formula .f .a{color:var(--amber)}
 .formula .cap{font-family:var(--mono);font-size:10px;color:var(--faint);letter-spacing:.22em;margin-top:12px}
-.term{border:1px solid var(--line-strong);background:#05070c;border-radius:12px;overflow:hidden}
+.term{border:1px solid var(--line-strong);background:#05070c;border-radius:18px;overflow:hidden}
 .term .bar{display:flex;gap:7px;padding:13px 16px;border-bottom:1px solid var(--line)}
 .term .bar i{width:9px;height:9px;border-radius:50%;background:rgba(233,228,214,.14)}
 .term .bar i:first-child{background:rgba(217,168,120,.5)}
@@ -224,7 +224,7 @@ h1 .under::after{content:"";position:absolute;left:2%;right:2%;bottom:.04em;heig
 .oneline{color:var(--dim);font-size:16.5px;max-width:32em;line-height:2.15;margin-bottom:5vh}
 .oneline code{font-family:var(--mono);font-size:14px;color:var(--moon)}
 .runfull{font-family:var(--mono);font-size:13.5px;color:var(--dim);letter-spacing:.02em;
-  padding:22px 28px;border:1px solid var(--line-strong);display:inline-block;background:#05070c;border-radius:10px}
+  padding:22px 28px;border:1px solid var(--line-strong);display:inline-block;background:#05070c;border-radius:8px}
 .runfull .pr{color:var(--moon)}
 .runfull .fl{color:var(--amber)}
 .runfull .cm{color:var(--faint)}
@@ -232,7 +232,7 @@ h1 .under::after{content:"";position:absolute;left:2%;right:2%;bottom:.04em;heig
 /* ---------- 页脚 ---------- */
 footer{border-top:1px solid var(--line);padding:10vh 0 7vh;position:relative;z-index:2}
 .coda{display:flex;justify-content:space-between;gap:6vw;flex-wrap:wrap;align-items:flex-end}
-.coda .big{font-family:var(--disp);font-size:clamp(30px,3.8vw,44px);line-height:2;max-width:15em;font-weight:500}
+.coda .big{font-family:var(--disp);font-size:clamp(30px,3.8vw,44px);line-height:2;max-width:15em;font-weight:600}
 .coda .big .m{color:var(--moon)}
 .coda .big .a{color:var(--amber)}
 .colophon{font-family:var(--mono);font-size:11px;color:var(--faint);letter-spacing:.12em;line-height:2.6;text-align:right}
@@ -285,12 +285,11 @@ footer{border-top:1px solid var(--line);padding:10vh 0 7vh;position:relative;z-i
 
 /* 卡片组:默认藏在文件夹里 */
 .pop-card{position:absolute;left:50%;bottom:120px;width:172px;padding:20px 18px 18px;
-  border-radius:16px;background:linear-gradient(165deg,#101722,#0a0e15 65%);
+  border-radius:18px;background:linear-gradient(165deg,#101722,#0a0e15 65%);
   border:1px solid var(--line-strong);color:var(--ink);text-decoration:none;
   display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;
   opacity:0;pointer-events:none;transform:translate(-50%,46px) rotate(0deg);
-  transition:transform .6s cubic-bezier(.19,1,.22,1),opacity .45s ease,box-shadow .35s ease;
-  box-shadow:0 18px 50px rgba(0,0,0,.5)}
+  transition:transform .6s cubic-bezier(.19,1,.22,1),opacity .45s ease,border-color .35s ease}
 .pop-card .pc-title{font-family:var(--mono);font-size:12.5px;letter-spacing:.2em}
 .pop-card .pc-title.dim{color:var(--dim)}
 .pop-card .pc-sub{font-size:11.5px;color:var(--faint);letter-spacing:.06em}
@@ -302,22 +301,23 @@ footer{border-top:1px solid var(--line);padding:10vh 0 7vh;position:relative;z-i
   transform:translate(-172%,-118px) rotate(-7deg);transition-delay:.12s}
 .folder-stage:hover .pop-card.soon,.folder-stage.open .pop-card.soon{
   transform:translate(72%,-110px) rotate(6deg);transition-delay:.18s}
-.pop-card.gh:hover{box-shadow:0 24px 70px rgba(0,0,0,.6),0 0 60px rgba(169,198,212,.12)}
+.pop-card.gh:hover{border-color:rgba(169,198,212,.4)}
 
 /* 主卡(Dream Layer):最大,居中最高,是 View Transition 的共享元素 */
 .pop-card.main{width:min(280px,64vw);padding:30px 22px 24px;z-index:2;
   cursor:pointer;overflow:hidden;will-change:transform;
-  view-transition-name:disc-card;contain:layout}
+  view-transition-name:disc-card;contain:layout;
+  box-shadow:rgba(0,0,0,.35) 3px 5px 30px 0}  /* Apple 唯一阴影:只给产品图(主卡即产品) */
 .folder-stage:hover .pop-card.main,.folder-stage.open .pop-card.main{
   transform:translate(-50%,-236px) rotate(0deg);transition-delay:.04s}
-.pop-card.main:hover{box-shadow:0 30px 90px rgba(0,0,0,.65),0 0 90px rgba(217,168,120,.12)}
+.pop-card.main:hover{box-shadow:rgba(0,0,0,.4) 4px 7px 36px 0}
 .pop-card.main .shine{position:absolute;inset:0;pointer-events:none;opacity:0;
   background:radial-gradient(420px circle at var(--mx,50%) var(--my,50%),rgba(233,228,214,.10),transparent 55%);
   transition:opacity .4s ease}
 .pop-card.main:hover .shine{opacity:1}
 .pop-card.main svg.moonmark{width:52%;height:auto;margin-bottom:18px;
   filter:drop-shadow(0 0 26px rgba(169,198,212,.25))}
-.pop-card.main .disc-title{font-family:var(--mono);font-size:14px;font-weight:500;
+.pop-card.main .disc-title{font-family:var(--mono);font-size:14px;font-weight:600;
   letter-spacing:.4em;color:var(--ink);text-indent:.4em}
 .pop-card.main .disc-tag{margin-top:12px;font-size:12.5px;color:var(--dim);letter-spacing:.1em}
 .pop-card.main .disc-hint{margin-top:16px;font-family:var(--mono);font-size:9.5px;
@@ -340,7 +340,7 @@ footer{border-top:1px solid var(--line);padding:10vh 0 7vh;position:relative;z-i
 ::view-transition-new(disc-card){
   animation-duration:.75s;
   animation-timing-function:cubic-bezier(.65,0,.2,1);
-  border-radius:22px;
+  border-radius:18px;
 }
 ::view-transition-old(disc-card){animation-name:disc-out}
 ::view-transition-new(disc-card){animation-name:disc-in}
@@ -354,6 +354,11 @@ footer{border-top:1px solid var(--line);padding:10vh 0 7vh;position:relative;z-i
   padding:9px 20px;cursor:pointer;backdrop-filter:blur(8px);
   transition:color .3s ease,border-color .3s ease}
 .back-disc:hover{color:var(--amber);border-color:rgba(217,168,120,.4)}
+.back-disc:active{transform:scale(.95)}   /* Apple 系统级按压微交互 */
+.back-disc{padding:12px 22px}             /* 触控靶 ≥44px */
+.back-disc:focus-visible{outline:2px solid var(--moon);outline-offset:3px}
+:where(a,button,[role="button"],[tabindex]):focus-visible{
+  outline:2px solid var(--moon);outline-offset:3px;border-radius:4px}
 #disc-view.fade-in,#detail-view.fade-in{animation:fadeSwap .45s ease}
 @keyframes fadeSwap{from{opacity:0}to{opacity:1}}
 </style>
