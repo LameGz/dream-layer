@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dream Layer — 第一双不隶属于你任何任务的眼睛</title>
 <meta name="description" content="一个让 agent 工作流在凌晨做梦的实验:强制随机配对,无目标自由联想,把白天被扔掉的碎片再看一遍。">
-<link rel="icon" type="image/svg+xml" href="../docs/assets/icon.svg">
+<link rel="icon" type="image/svg+xml" href="../../docs/assets/icon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -267,62 +267,6 @@ footer{border-top:1px solid var(--line);padding:10vh 0 7vh;position:relative;z-i
   *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
 }
 
-
-/* ---------- 个人作品集主页(portfolio home) ---------- */
-#detail-view[hidden]{display:none}
-.pf-hero{view-transition-name:disc-card;contain:layout;
-  min-height:88dvh;display:grid;grid-template-columns:1.2fr .8fr;gap:4vw;
-  align-items:center;padding-top:96px}
-.pf-hero .pf-left{max-width:620px}
-.pf-hero .pf-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.3em;color:var(--dim)}
-.pf-hero h1{font-size:clamp(40px,5.5vw,76px);font-weight:600;line-height:1.12;
-  letter-spacing:-.015em;margin:26px 0 30px}
-.pf-hero .pf-sub{font-size:17px;color:var(--dim);max-width:34em;line-height:2}
-.pf-hero .pf-sub strong{color:var(--ink);font-weight:400}
-.pf-links{margin-top:44px;display:flex;gap:26px;flex-wrap:wrap}
-.pf-links a{font-family:var(--mono);font-size:12.5px;letter-spacing:.12em;color:var(--moon);
-  text-decoration:none;border-bottom:1px solid rgba(169,198,212,.3);padding-bottom:4px;
-  transition:color .3s ease,border-color .3s ease}
-.pf-links a:hover{color:var(--amber);border-color:rgba(217,168,120,.5)}
-.pf-links a:focus-visible{outline:2px solid var(--moon);outline-offset:4px}
-.pf-hero .pf-visual{display:flex;align-items:center;justify-content:center}
-.pf-hero .pf-visual svg{width:min(380px,100%);height:auto;
-  filter:drop-shadow(0 0 40px rgba(169,198,212,.18))}
-
-/* 作品 bento:6 格(4 作品 + 深读入口 + GitHub),格数=内容数 */
-.work-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;
-  grid-auto-rows:minmax(230px,auto)}
-.work-card{position:relative;border:1px solid var(--line-strong);border-radius:18px;
-  padding:26px 24px;display:flex;flex-direction:column;gap:12px;
-  background:#0c1119;text-decoration:none;color:var(--ink);
-  transition:transform .45s cubic-bezier(.19,1,.22,1),border-color .35s ease}
-.work-card:hover{transform:translateY(-6px);border-color:rgba(169,198,212,.35)}
-.work-card.span2{grid-column:span 2}
-.work-card .wc-no{font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;color:var(--faint)}
-.work-card h3{font-size:21px;font-weight:600;letter-spacing:-.01em;margin:2px 0 0}
-.work-card p{font-size:14px;color:var(--dim);line-height:1.9;margin:0}
-.work-card .wc-meta{margin-top:auto;display:flex;gap:8px;flex-wrap:wrap}
-.work-card .wc-meta span{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;
-  color:var(--dim);border:1px solid var(--line-strong);border-radius:999px;padding:4px 12px}
-.work-card .wc-go{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--moon);
-  margin-top:10px}
-.work-card.tint{background:linear-gradient(165deg,#101a26,#0b1019 70%)}
-.work-card .crescent-sm{width:64px;height:auto;margin-bottom:6px;
-  filter:drop-shadow(0 0 18px rgba(169,198,212,.22))}
-.eval{display:flex;flex-direction:column;gap:7px;margin-top:4px}
-.eval .er{display:grid;grid-template-columns:86px 1fr 46px;gap:10px;align-items:center;
-  font-family:var(--mono);font-size:10px;color:var(--faint)}
-.eval .er .bars{display:flex;flex-direction:column;gap:3px}
-.eval .er .bar{height:7px;border-radius:8px;background:#1a2432;overflow:hidden}
-.eval .er .bar i{display:block;height:100%;border-radius:8px;background:#3d5a75}
-.eval .er .bar.hot i{background:var(--amber)}
-@media(max-width:900px){
-  .pf-hero{grid-template-columns:1fr;min-height:auto;padding-top:72px}
-  .pf-hero .pf-visual{display:none}
-  .work-grid{grid-template-columns:1fr}
-  .work-card.span2{grid-column:span 1}
-}
-
 /* ---------- Q 版文件夹开场(disc view) ---------- */
 #disc-view{position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;
   align-items:center;justify-content:center;gap:30px;background:var(--bg);cursor:default}
@@ -391,7 +335,7 @@ footer{border-top:1px solid var(--line);padding:10vh 0 7vh;position:relative;z-i
 }
 
 /* 放大过渡:光碟卡面 <-> hero 区(共享元素) */
-.hero{contain:layout}
+.hero{view-transition-name:disc-card;contain:layout}
 ::view-transition-old(disc-card),
 ::view-transition-new(disc-card){
   animation-duration:.75s;
@@ -425,238 +369,335 @@ footer{border-top:1px solid var(--line);padding:10vh 0 7vh;position:relative;z-i
 <div class="sky"><div class="stars"></div><div class="moon"></div></div>
 <div class="grain"></div>
 
-<!-- ============ Q 版文件夹:悬停展开卡片,点卡放大入梦 ============ -->
-<div id="disc-view">
-  <div class="folder-stage" id="folderStage" role="button" tabindex="0"
-       aria-label="作品文件夹:悬停或轻触展开">
-    <!-- 卡片组:从文件夹里扇形长出 -->
-    <a class="pop-card gh" href="https://github.com/LameGz/dream-layer" target="_blank" rel="noopener">
-      <svg viewBox="0 0 16 16" width="26" height="26" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
-      <div class="pc-title">GitHub</div>
-      <div class="pc-sub">仓库与源码 ↗</div>
-    </a>
-    <div class="pop-card soon" aria-disabled="true">
-      <div class="pc-plus">+</div>
-      <div class="pc-title dim">下一站</div>
-      <div class="pc-sub">coming soon</div>
-    </div>
-    <div class="pop-card main" id="discCard" role="button" tabindex="0" aria-label="进入 LameGz 作品集">
-      <div class="shine"></div>
-      <svg class="moonmark" viewBox="0 0 1024 1024" aria-hidden="true">
-        <defs>
-          <linearGradient id="dmoon" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stop-color="#c6dae6"/>
-            <stop offset="100%" stop-color="#8fb3c2"/>
-          </linearGradient>
-          <radialGradient id="dglow" cx="0.5" cy="0.5" r="0.5">
-            <stop offset="0%" stop-color="#d9a878" stop-opacity="0.30"/>
-            <stop offset="100%" stop-color="#d9a878" stop-opacity="0"/>
-          </radialGradient>
-        </defs>
-        <path d="M 460 212 A 300 300 0 1 0 460 812 A 340 340 0 0 1 460 212 Z" fill="url(#dmoon)"/>
-        <circle cx="500" cy="512" r="118" fill="url(#dglow)"/>
-        <circle cx="500" cy="512" r="42" fill="#d9a878"/>
-        <circle cx="488" cy="500" r="10" fill="#e9e4d6" opacity="0.85"/>
-      </svg>
-      <div class="disc-title">LAMEGZ</div>
-      <div class="disc-tag">作品集 · 夜间与记忆系统</div>
-      <div class="disc-hint">点击开门 · CLICK TO OPEN</div>
-    </div>
-    <!-- Q 版文件夹本体 -->
-    <svg class="folder-svg" viewBox="0 0 320 250" aria-hidden="true">
-      <defs>
-        <linearGradient id="folderFront" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#28405a"/>
-          <stop offset="100%" stop-color="#1a2a3c"/>
-        </linearGradient>
-      </defs>
-      <ellipse cx="160" cy="232" rx="120" ry="14" fill="#000" opacity="0.38"/>
-      <!-- 后片 + 标签页 -->
-      <rect x="42" y="66" width="236" height="152" rx="18" fill="#141f2b"/>
-      <rect x="42" y="46" width="96" height="38" rx="13" fill="#141f2b"/>
-      <!-- 前片(hover 掀起) -->
-      <g class="folder-lid">
-        <rect x="42" y="96" width="236" height="122" rx="18" fill="url(#folderFront)"/>
-        <rect x="42" y="96" width="236" height="14" rx="7" fill="#e9e4d6" opacity="0.07"/>
-        <!-- 月牙贴纸 -->
-        <g transform="translate(160,150) rotate(-9)">
-          <rect x="-42" y="-46" width="84" height="92" rx="10" fill="#e9e4d6" opacity="0.94"/>
-          <path d="M -2 -34 A 26 26 0 1 0 -2 22 A 30 30 0 0 1 -2 -34 Z" fill="#8fb3c2"/>
-          <circle cx="3" cy="-6" r="4.6" fill="#d9a878"/>
-        </g>
-      </g>
-    </svg>
-  </div>
-  <p class="disc-foot">LAMEGZ · 个人作品集 · 夜间系统与工程记忆 · 全部开源</p>
-</div>
-
-<div id="detail-view" hidden>
-<button class="back-disc" id="backDisc" aria-label="收回光碟">◉ 收回光碟</button>
+<a class="back-disc" href="../../index.html" aria-label="回到作品集">◉ 回到作品集</a>
 
 <header class="top">
-  <div class="mark"><b>LAMEGZ</b><span class="tagline">&nbsp;&nbsp;·&nbsp;&nbsp;作品集 · 夜间与记忆系统</span></div>
-  <div class="state">独立开发 · 全部开源 · <span style="color:var(--amber)">179 tests</span></div>
+  <div class="mark"><b>DREAM&nbsp;LAYER</b><span class="tagline">&nbsp;&nbsp;·&nbsp;&nbsp;凌晨三点,它替你看一遍</span></div>
+  <div class="state">P0+P1 已建成&nbsp;·&nbsp;179 个测试守着</div>
 </header>
 
 <nav class="sidenav">
-  <a href="#top"><i></i>主页</a>
-  <a href="#works"><i></i>作品</a>
-  <a href="https://github.com/LameGz" target="_blank" rel="noopener"><i></i>GitHub ↗</a>
+  <a href="#night"><i></i>一夜</a>
+  <a href="#why"><i></i>为什么</a>
+  <a href="#not"><i></i>分界线</a>
+  <a href="#lab"><i></i>实验</a>
+  <a href="#run"><i></i>跑起来</a>
   <a href="#agents"><i></i>Agent 接入</a>
 </nav>
 
 <div class="wrap">
 
-  <!-- ============ 个人作品集主页 ============ -->
-  <section class="pf-hero" id="top">
-    <div class="pf-left">
-      <p class="pf-eyebrow">LAMEGZ · 独立开发 · AGENT 工具链</p>
-      <h1>造 agent 的<br>夜间与记忆系统</h1>
-      <p class="pf-sub">
-        <strong>Dream Layer</strong> 让 agent 在凌晨做梦,<strong>Synapse</strong> 让它记得做过的工程。
-        独立开发,全部开源,零外部服务。
-      </p>
-      <div class="pf-links">
-        <a href="https://github.com/LameGz" target="_blank" rel="noopener">GITHUB ↗</a>
-        <a href="https://linux.do/u/lame1255/summary" target="_blank" rel="noopener">LINUX.DO ↗</a>
-        <a href="#works">精选作品 ↓</a>
+  <!-- ============ 作品 01 · DREAM LAYER · 深读 ============ -->
+  <p class="pf-eyebrow" style="margin:9vh 0 0">作品 01 · DREAM LAYER · 深读</p>
+
+<!-- ============ HERO ============ -->
+  <section class="hero">
+    <p class="eyebrow">一个夜间实验 <i>·</i> 让 agent 工作流学会做梦 <i>·</i> 自用开源</p>
+    <h1>第一双<br>不隶属于你任何<br><span class="under">任务</span>的眼睛</h1>
+    <p class="lede">
+      白天,你的系统看过很多东西,也扔掉了很多。凌晨三点,它把流经系统的碎片——
+      <strong>包括被你拒掉的</strong>——随机抓两条:管它是文献、邮件,还是今天早上的一次训练——
+      放进 <span class="hot">temperature 1.2</span> 的高温里碰一碰。
+      九成五是废话;要的只是废话里偶尔藏着的、<strong>你醒着时看不见的东西</strong>。
+    </p>
+    <div class="meta">
+      <span>入梦 <b>03:00</b></span>
+      <span>醒来 <b>05:00</b></span>
+      <span>一夜 <b>20 对</b></span>
+      <span>进晨报 <b>≤ 3 条</b></span>
+    </div>
+
+    <div class="pairing">
+      <span class="verdict">LIVE <b>·</b> 强制随机配对,现在正发生</span>
+      <div class="frag fa" id="fragA">
+        <span class="tag"></span><span class="ftext"></span>
+      </div>
+      <div class="frag fb" id="fragB">
+        <span class="tag"></span><span class="ftext"></span>
+      </div>
+      <div class="dream">
+        <span class="who" id="dreamWho"></span>
+        <span id="dreamText"></span><span class="caret"></span>
       </div>
     </div>
-    <div class="pf-visual" aria-hidden="true">
-      <svg viewBox="0 0 1024 1024">
-        <defs>
-          <linearGradient id="pvmoon" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stop-color="#c6dae6"/>
-            <stop offset="100%" stop-color="#8fb3c2"/>
-          </linearGradient>
-          <radialGradient id="pvglow" cx="0.5" cy="0.5" r="0.5">
-            <stop offset="0%" stop-color="#d9a878" stop-opacity="0.30"/>
-            <stop offset="100%" stop-color="#d9a878" stop-opacity="0"/>
-          </radialGradient>
-        </defs>
-        <path d="M 460 212 A 300 300 0 1 0 460 812 A 340 340 0 0 1 460 212 Z" fill="url(#pvmoon)"/>
-        <circle cx="500" cy="512" r="118" fill="url(#pvglow)"/>
-        <circle cx="500" cy="512" r="42" fill="#d9a878"/>
-        <circle cx="488" cy="500" r="10" fill="#e9e4d6" opacity="0.85"/>
-      </svg>
-    </div>
   </section>
 
-  <!-- ============ 精选作品 ============ -->
-  <section id="works">
-    <p class="kicker">精选作品 · SELECTED WORKS</p>
-    <h2>四件东西,<br>都<em>开源</em>。</h2>
-    <div class="work-grid">
-      <a class="work-card span2 tint" href="works/dream-layer/index.html" style="view-transition-name:wl-dream">
-        <svg class="crescent-sm" viewBox="0 0 1024 1024" aria-hidden="true">
-          <path d="M 460 212 A 300 300 0 1 0 460 812 A 340 340 0 0 1 460 212 Z" fill="#c6dae6"/>
-          <circle cx="500" cy="512" r="42" fill="#d9a878"/>
-        </svg>
-        <div class="wc-no">作品 01 · PYTHON · 179 TESTS</div>
-        <h3>Dream Layer</h3>
-        <p>agent 工作流的 REM 层:夜里把流经系统的碎片(包括被拒的)强制随机配对、高温碰撞,早上产出 ≤3 条观察与问题。相似度禁止入配对。</p>
-        <div class="wc-meta"><span>Python</span><span>179 tests</span><span>零外部服务</span></div>
-        <div class="wc-go">进入作品页 →</div>
-      </a>
-      <a class="work-card" href="works/synapse-graph-skills/index.html" target="_blank" rel="noopener">
-        <div class="wc-no">作品 02 · SHELL/PYTHON · ★11</div>
-        <h3>Synapse Graph Skills</h3>
-        <p>编码代理的图式工程记忆:meta/*.md 节点 + 自动 MEMORY_MAP,无缝写入读出,跨宿主可插拔,零依赖。</p>
-        <div class="eval">
-          <div class="er"><span>文件读取</span><span class="bars"><span class="bar"><i style="width:100%"></i></span><span class="bar hot"><i style="width:50%"></i></span></span><span>-50%</span></div>
-          <div class="er"><span>无关文件</span><span class="bars"><span class="bar"><i style="width:100%"></i></span><span class="bar hot"><i style="width:2%"></i></span></span><span>→0</span></div>
-          <div class="er"><span>断言通过</span><span class="bars"><span class="bar"><i style="width:75%"></i></span><span class="bar hot"><i style="width:100%"></i></span></span><span>100%</span></div>
+  <!-- ============ 一夜 ============ -->
+  <section id="night">
+    <p class="kicker">一夜 · A NIGHT</p>
+    <h2>它睡得不讲究,<br>但<em>睡得极有规律</em>。</h2>
+    <div class="night">
+      <div class="clock reveal">
+        <div class="t">23:47<small>到 02:30 之前<br>它什么都不做</small></div>
+        <p>没有请求,没有触发,没人调用它。到点才动——闹钟后面站着的不是 cron,是它自己的生物钟。</p>
+      </div>
+      <div class="ticks">
+        <div class="tick reveal">
+          <div class="at">02:30<i>COLLECT</i></div>
+          <div>
+            <h3>捡东西</h3>
+            <p>白天流经系统的一切落进池子:入选的、被拒的、犹豫的。<b>被拒的权重反而更高</b>——白天没人看过它们。密钥先打码,云目录拒写,红线在读取之前生效。</p>
+            <p class="note">content + time 必填,其余可选 // 任何系统,四字段接入</p>
+          </div>
         </div>
-        <div class="wc-go">仓库 ↗</div>
-      </a>
-      <a class="work-card" href="works/obsidian-base-builder/index.html" target="_blank" rel="noopener">
-        <div class="wc-no">作品 03 · TUTORIAL · ★13</div>
-        <h3>Obsidian Base Builder</h3>
-        <p>从零搭建个人知识库的实战手册:PARA 目录、5 份 Templater 模板、Git 自动备份、Claude 剪藏工作流。</p>
-        <div class="wc-meta"><span>PARA</span><span>Obsidian</span><span>★13</span></div>
-        <div class="wc-go">仓库 ↗</div>
-      </a>
-      <a class="work-card" href="works/camerasync/index.html" target="_blank" rel="noopener">
-        <div class="wc-no">作品 04 · PYTHON</div>
-        <h3>CameraSync</h3>
-        <p>相机照片导入工具:MTP/PTP 一键扫描,按拍摄日期筛选,批量下载三步搞定。</p>
-        <div class="wc-meta"><span>Python</span><span>MTP/PTP</span></div>
-        <div class="wc-go">仓库 ↗</div>
-      </a>
-      <a class="work-card" href="https://github.com/LameGz" target="_blank" rel="noopener">
-        <div class="wc-no">GITHUB · @LAMEGZ</div>
-        <h3>更多小作品</h3>
-        <p>工具、实验、半成品——都在仓库里躺着,欢迎翻。</p>
-        <div class="wc-go">github.com/LameGz ↗</div>
-      </a>
+        <div class="tick reveal">
+          <div class="at">03:00<i>DREAM</i></div>
+          <div>
+            <h3>入梦</h3>
+            <p>随机抓两条,强迫它们碰。<b>像镜子的那叫记忆巩固,满地都是</b>;这里要的是撞出火花的两块石头。碰不出来就说碰不出来——<b>这不算失败,这算诚实</b>。</p>
+            <p class="note">temperature 1.2 · 每对一次小调用 · 拒答就换个人格再问一次,不多问</p>
+          </div>
+        </div>
+        <div class="tick reveal">
+          <div class="at">05:00<i>WAKE</i></div>
+          <div>
+            <h3>醒来</h3>
+            <p>二十对里绝大多数判 noise。活过祈使检测和 grounding 两道闸的,最多三条,写进晨报。每条是一个观察,一个问题。<s>没有建议,没有行动项</s>。<b>梦只负责看见,拍板是你。</b></p>
+            <p class="note">verdict: noise / recall / trend / cross_time —— 机器提名,定案属于 confirm</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="manuscript reveal">
+<pre><span class="mn">## pair 07</span> · [rejected · daily-pipeline 09-21] × [hesitated · kb 07-18]
+<span class="mn">persona:</span> 审计员的怀疑
+<span class="hl">raw: 两条都在等同一个 2.4。一个当它没发生,一个记下了为什么当初没做。
+     中间隔着的不是两个月,是一次没有召开的会。</span>
+verdict: <span class="amb">cross_time</span>   surprise 0.71 · Lane B · 共享锚点「Laya 2.4」
+observation: 2.4 这个数字在两个系统里各自出现过一次,相隔两个月。
+open_question: 上次反对的理由是现金流——这个理由,现在还成立吗?</pre>
     </div>
   </section>
 
-  
-</div><!-- /#detail-view -->
+  <!-- ============ 为什么 ============ -->
+  <section class="why" id="why">
+    <p class="kicker">为什么 · WHY</p>
+    <h2>检索只会找你正在找的。<br>梦是给<em>你没想找的</em>留的门。</h2>
+    <div class="reveal">
+      <p class="lead">相似度、RAG、记忆巩固,全是目标函数的延伸——<span class="m">盲区的定义,就是你的目标函数照不到的地方</span>。要看见盲区,只能靠跟你目标无关的随机。</p>
+    </div>
+    <div class="pains">
+      <div class="pain reveal">
+        <div class="no">no. 1</div>
+        <h3>暗物质</h3>
+        <p>系统每天拒绝一堆东西,误杀的、藏着前兆的,<b>从此无人回看</b>。</p>
+        <p class="foot">rejected 2.0 / hesitated 3.0 —— 没人看过的,夜里优先翻</p>
+      </div>
+      <div class="pain reveal">
+        <div class="no">no. 2</div>
+        <h3>邻近带蒸发</h3>
+        <p>2.49 和 2.51 命运相反,信息量几乎相同。<b>"差一点"聚起来,其实是升温。</b></p>
+        <p class="foot">band.svg · 邻近带曲线,每晚自动画</p>
+      </div>
+      <div class="pain reveal">
+        <div class="no">no. 3</div>
+        <h3>跨时失联</h3>
+        <p>一周前读过的文献,今天又撞见一篇——它们其实共享着同一个名字,你没发觉。<b>从来没有人替你点破这条线</b>。</p>
+        <p class="foot">Lane B · 共享的专名 / 数字 / 低频词 → 直通点破</p>
+      </div>
+    </div>
+    <p class="punch reveal"><span class="a">有用是任务态的贪心</span>,<span class="m">看见是另一回事</span>。</p>
+  </section>
+
+  <!-- ============ 它不做的事 ============ -->
+  <section id="not">
+    <p class="kicker">分界线 · NOT</p>
+    <h2>四件它<em>坚决不做</em>的事。<br>做到任何一件,它就不再是梦。</h2>
+    <div class="nots">
+      <div class="not reveal">
+        <div class="w">不喂模型</div>
+        <p>梦话永不回流进记忆、不进训练。<b>那不是做梦,是喂镜子</b>——镜子里的东西,越来越像它自己。</p>
+      </div>
+      <div class="not reveal">
+        <div class="w">不建议</div>
+        <p>命中"建议 / 应该 / 下一步"的 open_question,<b>直接降为 noise</b>——写死在代码里,不靠提示词碰运气。梦不立项。</p>
+      </div>
+      <div class="not reveal">
+        <div class="w">不相似</div>
+        <p>配对永远不看像不像。相似度一插手,它就退化成又一次检索:<b>温柔,高效,永远绕开你的盲区</b>。</p>
+      </div>
+      <div class="not reveal">
+        <div class="w">不保证</div>
+        <p>95% 的夜晚是废话,如实写在文档里。<b>以命中率为由调整随机性,是被明文禁止的改动</b>。</p>
+      </div>
+      <p class="aside reveal">分辨真假做梦只看一件事:梦话喂给了谁。
+      喂给模型的,是在训练自己;<span class="g">喂给人的,才是在看世界。</span></p>
+    </div>
+  </section>
+
+  <!-- ============ 实验 ============ -->
+  <section id="lab">
+    <p class="kicker">实验 · THE BET</p>
+    <h2>仪器很简陋,<br>但<em>假说是清楚的</em>。</h2>
+    <div class="lab">
+      <div class="left">
+        <p class="reveal">唯一做过 REM 的同行,在事实回忆基准上测出"无可测收益"——作者自己承认的。<b>这不能怪 REM</b>:量桌子的尺子,量不出一段音乐。</p>
+        <p class="reveal">所以我们的尺子换成了人。意外不意外,机器打分;有没有用,<b>只算你某个早上敲下 confirm 那一下</b>。缺一,信号不成立。</p>
+        <div class="formula reveal">
+          <div class="f">serendipity <span class="m">= 意外(surprise)</span> ∩ <span class="a">有用(人工确认)</span></div>
+          <div class="cap">RecSys 领域对 serendipity 的标准定义,二者缺一不可</div>
+        </div>
+        <div class="metrics reveal">
+          误杀回收 <b>0 → ≥1/月</b> · 趋势命中 <b>登记后 14 天对账</b> · 跨时确认 <b>0 → ≥1</b><br>
+          梦产率 <b>长期期望值低,如实展示</b> · <span class="star">存在感指标:两周后,你是否开始期待晨报</span>
+        </div>
+      </div>
+      <div class="reveal">
+        <div class="term">
+          <div class="bar"><i></i><i></i><i></i></div>
+          <div class="body">
+            <span class="p">$</span> <span class="in">dreamlayer run --once --fake</span><br>
+            <span class="out">journal: data/journal/2026-10-01.md</span><br>
+            <span class="out">morning: data/morning/2026-10-01.md</span><br>
+            <span class="p">$</span> <span class="in">dreamlayer confirm 2026-10-01-07 cross_time</span><br>
+            <span class="ok">confirmed → reflux_log.jsonl</span> <span class="out">// 这一晚,没白梦</span><br>
+            <span class="p">$</span> <span class="cursor"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 跑起来 ============ -->
+  <section id="run">
+    <p class="kicker">跑起来 · RUN</p>
+    <h2>四份配置,一个命令。<br><em>别的什么都不绑。</em></h2>
+    <p class="oneline reveal">content + time,必填只有两样。权重、节律、隐私、引擎各占一份 yaml;OpenAI 兼容端点,改一行 <code>base_url</code> 即换。</p>
+    <div class="runfull reveal">
+      <span class="pr">$</span> python -m dreamlayer run --once <span class="fl">--fake</span> &nbsp;&nbsp;<span class="cm"># 零网络,零花费,先看一夜假梦</span>
+    </div>
+
+    <!-- ============ Agent 接入 ============ -->
+    <div id="agents" style="margin-top:13vh">
+      <p class="kicker">给 Agent 用 · SKILL</p>
+      <h2 style="margin-bottom:5vh">不做常驻服务。<br><em>一个 Skill,四个命令。</em></h2>
+      <p class="oneline reveal">仓库自带 <code>skills/dream/SKILL.md</code>:Hermes、ZCode 或任何会读 SKILL.md 的宿主,复制过去就接入。agent 的四个动作:</p>
+      <div class="term reveal">
+        <div class="bar"><i></i><i></i><i></i></div>
+        <div class="body">
+          <span class="out"># 1 · 丢废料:会话里的废弃方案、失败尝试、犹豫</span><br>
+          <span class="p">$</span> <span class="in">python -m dreamlayer drop "废弃方案:把 waker 挂进 cron" --tag discarded --origin zcode</span><br>
+          <span class="out"># 2 · 做一夜梦(夜里触发,或手动)</span><br>
+          <span class="p">$</span> <span class="in">python -m dreamlayer run --once</span><br>
+          <span class="out"># 3 · 读晨报:data/morning/&lt;今天&gt;.md,把观察与问题转述给人</span><br>
+          <span class="out"># 4 · 陪人过审:逐条确认有效回流(或 --batch 批量)</span><br>
+          <span class="p">$</span> <span class="in">python -m dreamlayer review</span>
+        </div>
+      </div>
+      <div class="metrics reveal">
+        通道:Skill(CLI)+ <b>drop 目录 / listen POST 端点</b>(已在)· MCP Events 订阅(P2)<br>
+        红线:agent 只投料与转述,<b>梦话永不回注,不立项,不定案</b>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- ============ 页脚 ============ -->
+<footer>
+  <div class="wrap">
+    <div class="coda">
+      <div class="big reveal">所有框架都给了 agent 清醒,<br>有人给了它<span class="m">深睡</span>,<br>
+        这里补的是<span class="a">梦</span>——<br>它把你扔掉的东西,又看了一遍。</div>
+      <div class="colophon">
+        dream-layer · v0.1 · 手写,无框架<br>
+        <span class="ok">157 tests</span> · all FakeLLM · 零网络零花费<br>
+        Python ≥ 3.11 · pyyaml + openai(懒加载)<br>
+        P2 待建:docker compose · MCP Events · 本地引擎预设
+      </div>
+    </div>
+    <div class="redlines">
+      梦话不回注主池 · 不以命中率为由调整随机性 · 语义相似度不参与配对 · 主动浏览外部世界不做 · 多人梦池,P2 后再议
+    </div>
+  </div>
+</footer>
+</div><!-- /.wrap -->
 
 <script>
-/* ---------- 文件夹开场 + View Transitions(跨文档 MPA 过渡) ---------- */
-(function(){
-  const discView = document.getElementById("disc-view");
-  const detailView = document.getElementById("detail-view");
-  const stage = document.getElementById("folderStage");
-  const card = document.getElementById("discCard");
-  const shine = card.querySelector(".shine");
-  const rise = window.matchMedia("(max-width: 640px)").matches ? "-208px" : "-236px";
-  let raf = null;
+/* 主界面轮播:世间万物都能被放进同一晚——文献、邮件、健身、会话废料,随机两条,逐字点破 */
+const SHOWS = [
+  {a:{cls:"rejected", tag:"碎片 A · rejected · daily-pipeline · 09-21",
+      text:"被拒:Laya 2.4,信源单一,仅自媒体转述,进邻近带观察。"},
+   b:{cls:"hesitated", tag:"碎片 B · hesitated · kb · 07-18",
+      text:"青鸾计划立项被否的那次复盘:当时反对的理由是现金流。"},
+   who:"PERSONA · 审计员的怀疑",
+   dream:"两条都在等同一个 2.4。中间隔着的不是两个月,是一次没有召开的会。"},
+  {a:{cls:"unknown", tag:"碎片 A · unknown · hermes · 10-01",
+      text:"上午练了腿,负重降了一档——恢复期,晨起心律偏高。"},
+   b:{cls:"selected", tag:"碎片 B · selected · kb · 09-14",
+      text:"文献笔记:超量恢复主要发生在睡眠期,REM 阶段做神经层面的整合。"},
+   who:"PERSONA · 一个刚入职的实习生",
+   dream:"身体也在夜里做梦:训练是白天的事,变强是夜里的事。"},
+  {a:{cls:"discarded", tag:"碎片 A · discarded · mail · 09-28",
+      text:"邮件:供应商把对账日从 25 号悄悄改到 28 号,没抄送任何人。"},
+   b:{cls:"discarded", tag:"碎片 B · discarded · dev-tools · 10-01",
+      text:"废弃方案:把 waker 挂进 cron——违背节律而非指令,放弃。"},
+   who:"PERSONA · 审计员的怀疑",
+   dream:"都是一次没人反对的改动。危险从不大声,它只是没抄送。"},
+  {a:{cls:"selected", tag:"碎片 A · selected · kb · 09-07",
+      text:"读过:海马体片段化重激活的综述,当时标记了以后再看。"},
+   b:{cls:"unknown", tag:"碎片 B · unknown · mail · 10-01",
+      text:"今天推来的新文献:睡眠期记忆再激活与创造力,作者不同,术语陌生。"},
+   who:"PERSONA · 假设十年后回看",
+   dream:"共享的名字叫重激活。你上周读过它的一半,今天遇到的,是另一半。"},
+];
 
-  function swap(toDetail){
-    return function(){
-      discView.hidden = toDetail;
-      detailView.hidden = !toDetail;
-      window.scrollTo(0, 0);
-    };
+const el = document.getElementById("dreamText");
+const who = document.getElementById("dreamWho");
+const fragA = document.getElementById("fragA");
+const fragB = document.getElementById("fragB");
+let si = 0;
+
+function show(i){
+  const s = SHOWS[i];
+  fragA.className = "frag fa " + s.a.cls;
+  fragA.querySelector(".tag").textContent = s.a.tag;
+  fragA.querySelector(".ftext").textContent = s.a.text;
+  fragB.className = "frag fb " + s.b.cls;
+  fragB.querySelector(".tag").textContent = s.b.tag;
+  fragB.querySelector(".ftext").textContent = s.b.text;
+  who.textContent = s.who;
+}
+
+function type(text, i = 0){
+  if(i <= text.length){
+    el.textContent = text.slice(0, i);
+    setTimeout(() => type(text, i + 1), 105 + Math.random() * 85);
+  } else {
+    setTimeout(next, 4300);
   }
-  function go(toDetail){
-    if(document.startViewTransition){ document.startViewTransition(swap(toDetail)); }
-    else{
-      const el = toDetail ? detailView : discView;
-      el.classList.add("fade-in");
-      swap(toDetail)();
-      setTimeout(() => el.classList.remove("fade-in"), 500);
-    }
-  }
-  card.addEventListener("click", (e) => { e.stopPropagation(); go(true); });
-  card.addEventListener("keydown", (e) => {
-    if(e.key === "Enter" || e.key === " "){ e.preventDefault(); e.stopPropagation(); go(true); }
-  });
-  document.getElementById("backDisc").addEventListener("click", () => go(false));
+}
 
-  stage.addEventListener("click", (e) => {
-    if(e.target.closest(".pop-card")) return;
-    stage.classList.toggle("open");
-  });
-  stage.addEventListener("keydown", (e) => {
-    if(e.key === "Enter" || e.key === " "){ e.preventDefault(); stage.classList.toggle("open"); }
-  });
-  document.addEventListener("click", (e) => {
-    if(!e.target.closest("#folderStage")) stage.classList.remove("open");
-  });
+function next(){
+  el.style.opacity = 0;
+  fragA.classList.add("swapping");
+  fragB.classList.add("swapping");
+  setTimeout(() => {
+    si = (si + 1) % SHOWS.length;
+    show(si);
+    fragA.classList.remove("swapping");
+    fragB.classList.remove("swapping");
+    el.style.opacity = 1;
+    type(SHOWS[si].dream);
+  }, 750);
+}
 
-  card.addEventListener("mousemove", (e) => {
-    if(window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const r = card.getBoundingClientRect();
-    const px = (e.clientX - r.left) / r.width;
-    const py = (e.clientY - r.top) / r.height;
-    if(raf) cancelAnimationFrame(raf);
-    raf = requestAnimationFrame(() => {
-      card.style.transform =
-        `translate(-50%,${rise}) perspective(900px) rotateY(${(px - .5) * 9}deg) rotateX(${(.5 - py) * 7}deg) translateZ(14px)`;
-      card.style.setProperty("--mx", (px * 100) + "%");
-      card.style.setProperty("--my", (py * 100) + "%");
-    });
-  });
-  card.addEventListener("mouseleave", () => {
-    if(raf) cancelAnimationFrame(raf);
-    card.style.transform = "";
-  });
-})();
+el.style.transition = "opacity .7s";
+fragA.style.transition = "opacity .7s ease, transform 11s ease-in-out";
+fragB.style.transition = "opacity .7s ease, transform 11s ease-in-out";
+show(0);
+type(SHOWS[0].dream);
+
+/* 滚动浮现 */
+const io = new IntersectionObserver(es => {
+  es.forEach(e => { if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target); } });
+}, {threshold:.12});
+document.querySelectorAll(".reveal").forEach((n, i) => {
+  n.style.transitionDelay = (i % 3) * .12 + "s";
+  io.observe(n);
+});
 </script>
+
 </body>
 </html>

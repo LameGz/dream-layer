@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Synapse Graph Skills — 编码代理的图式工程记忆</title>
+<link rel="icon" type="image/svg+xml" href="../../docs/assets/icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#070a10;--ink:#e9e4d6;--dim:#9aa2ae;--faint:#5c6470;--moon:#a9c6d4;
+  --amber:#d9a878;--line:rgba(233,228,214,.09);--line-strong:rgba(233,228,214,.18);
+  --disp:"Microsoft YaHei","微软雅黑","PingFang SC",sans-serif;
+  --body:"Microsoft YaHei","微软雅黑","PingFang SC",sans-serif;
+  --mono:"JetBrains Mono",Consolas,monospace}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;
+  line-height:2;letter-spacing:.03em;overflow-x:hidden}
+a{color:var(--moon)}
+.wrap{max-width:1000px;margin:0 auto;padding:0 5vw;position:relative;z-index:2}
+.back-disc{position:fixed;top:18px;right:4vw;z-index:30;font-family:var(--mono);
+  font-size:11px;letter-spacing:.2em;color:var(--dim);background:rgba(11,15,23,.72);
+  border:1px solid var(--line-strong);border-radius:999px;padding:12px 22px;
+  text-decoration:none;backdrop-filter:blur(8px);transition:color .3s,border-color .3s}
+.back-disc:hover{color:var(--amber);border-color:rgba(217,168,120,.4)}
+.back-disc:active{transform:scale(.95)}
+.back-disc:focus-visible{outline:2px solid var(--moon);outline-offset:3px}
+header.top{padding:15vh 0 6vh}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.3em;color:var(--dim);margin-bottom:4vh}
+h1{font-size:clamp(38px,5vw,64px);font-weight:600;line-height:1.16;letter-spacing:-.015em}
+.lede{margin-top:3.5vh;color:var(--dim);font-size:17px;max-width:36em}
+.lede strong{color:var(--ink);font-weight:400}
+h2{font-size:26px;font-weight:600;letter-spacing:-.01em;margin:11vh 0 3.5vh}
+p{color:var(--dim);max-width:38em}
+p strong{color:var(--ink);font-weight:400}
+ul{list-style:none;max-width:38em}
+ul li{color:var(--dim);padding:1em 0;border-bottom:1px solid var(--line)}
+ul li b{color:var(--ink);font-weight:400}
+.code{font-family:var(--mono);font-size:12.5px;line-height:2.1;color:var(--dim);
+  background:#05070c;border:1px solid var(--line-strong);border-radius:8px;
+  padding:22px 26px;margin:4vh 0;overflow-x:auto;white-space:pre}
+.code .c{color:var(--faint)}
+.hosts{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:4vh 0}
+.hosts div{border:1px solid var(--line-strong);border-radius:18px;padding:20px 18px;
+  font-size:13.5px;color:var(--dim)}
+.hosts div b{display:block;color:var(--ink);font-family:var(--mono);font-size:12px;
+  letter-spacing:.1em;margin-bottom:8px;font-weight:600}
+.eval{margin:4vh 0;display:flex;flex-direction:column;gap:10px;max-width:560px}
+.er{display:grid;grid-template-columns:96px 1fr 56px;gap:12px;align-items:center;
+  font-family:var(--mono);font-size:11px;color:var(--faint)}
+.er .bars{display:flex;flex-direction:column;gap:4px}
+.er .bar{height:8px;border-radius:8px;background:#141d29;overflow:hidden}
+.er .bar i{display:block;height:100%;border-radius:8px;background:#3d5a75}
+.er .bar.hot i{background:var(--amber)}
+@media(max-width:640px){.hosts{grid-template-columns:1fr}}
+:where(a,button):focus-visible{outline:2px solid var(--moon);outline-offset:3px}
+@view-transition{navigation:auto}
+.hero-mark{view-transition-name:wl-synapse}
+</style>
+</head>
+<body>
+<a class="back-disc" href="../../index.html" aria-label="回到作品集">◉ 回到作品集</a>
+
+<div class="wrap">
+  <header class="top">
+    <p class="eyebrow">作品 02 · SHELL / PYTHON · ★11 · 零依赖</p>
+    <h1 class="hero-mark">Synapse<br>Graph Skills</h1>
+    <p class="lede"><strong>编码代理的图式工程记忆</strong>——把"记得这次改了什么"从聊天记录里搬进文件图谱:meta/*.md 节点 + 自动生成的 MEMORY_MAP,Markdown 是唯一真相,SQLite 只是可丢弃的缓存。</p>
+  </header>
+
+  <h2>解决什么</h2>
+  <p>独立全栈开发者的项目记忆住在聊天历史里:跨会话蒸发、跨工具断裂、模块一多就退化成暴力重读文件。Synapse 把它变成<span style="color:var(--ink)">无缝的双向流</span>——你只管写代码。</p>
+
+  <h2>两条无缝</h2>
+  <ul>
+    <li><b>无缝写入(SessionEnd)</b> — 会话结束时,钩子从 git diff 与对话信号里提取值得记的变更:高置信(≥70%)静默落库,低置信进 Memory Inbox 等你审。</li>
+    <li><b>无缝读出(UserPromptSubmit)</b> — 你提问时,钩子把相关记忆节点的摘要注入上下文,中文提问也认(内置跨语言主题别名)。</li>
+  </ul>
+
+  <h2>Eval 实测</h2>
+  <div class="eval">
+    <div class="er"><span>文件读取</span><span class="bars"><span class="bar"><i style="width:100%"></i></span><span class="bar hot"><i style="width:50%"></i></span></span><span>12 → 6</span></div>
+    <div class="er"><span>无关文件</span><span class="bars"><span class="bar"><i style="width:100%"></i></span><span class="bar hot"><i style="width:2%"></i></span></span><span>5 → 0</span></div>
+    <div class="er"><span>断言通过</span><span class="bars"><span class="bar"><i style="width:75%"></i></span><span class="bar hot"><i style="width:100%"></i></span></span><span>75% → 100%</span></div>
+  </div>
+
+  <h2>跨宿主可插拔</h2>
+  <div class="hosts">
+    <div><b>CLAUDE CODE</b>hooks 全生命周期接入,完全无缝</div>
+    <div><b>CODEX / GEMINI CLI / CURSOR 等</b>托管 AGENTS.md 段,半无缝</div>
+    <div><b>任意宿主</b>agent-instructions.md,手动接线</div>
+  </div>
+
+  <h2>纪律与零依赖</h2>
+  <p><strong>检索讲规矩</strong>:先 MAP、再目标节点、后有界 BFS(深度 ≤2、宽度 ≤5)——模块再多,上下文也是平的。<strong>零依赖</strong>:bash 4+ 与 Python 3.8 标准库,无 pip、无 npm、无外部 API、无向量数据库。</p>
+
+  <div class="code"><span class="c"># 三步接入</span>
+cp -r synapse-graph-memory ~/.claude/skills/
+bash ~/.claude/skills/synapse-graph-memory/scripts/init.sh --project /path/to/project
+python adapters/install_adapter.py auto --project /path/to/project</div>
+
+  <p style="margin-top:6vh"><a href="https://github.com/LameGz/synapse-graph-skills" target="_blank" rel="noopener">github.com/LameGz/synapse-graph-skills ↗</a></p>
+</div>
+</body>
+</html>
