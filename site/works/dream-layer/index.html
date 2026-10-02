@@ -6,23 +6,22 @@
 <title>Dream Layer — 第一双不隶属于你任何任务的眼睛</title>
 <meta name="description" content="一个让 agent 工作流在凌晨做梦的实验:强制随机配对,无目标自由联想,把白天被扔掉的碎片再看一遍。">
 <link rel="icon" type="image/svg+xml" href="../../docs/assets/icon.svg">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
+@font-face{font-family:"Geist";src:url("../../fonts/Geist-var.woff2") format("woff2");font-weight:100 900;font-display:swap}
+@font-face{font-family:"GeistMono";src:url("../../fonts/GeistMono-var.woff2") format("woff2");font-weight:100 900;font-display:swap}
 :root{
-  --bg:#070a10;
-  --bg-soft:#0b0f17;
-  --ink:#e9e4d6;          /* 月纸白,偏暖 */
-  --dim:#9aa2ae;
-  --faint:#5c6470;
-  --moon:#a9c6d4;         /* 月光青 */
-  --amber:#d9a878;        /* 梦的温度 */
-  --line:rgba(233,228,214,.09);
-  --line-strong:rgba(233,228,214,.18);
-  --disp:"Microsoft YaHei","微软雅黑","PingFang SC","HarmonyOS Sans SC",sans-serif;   /* 标题:雅黑 */
-  --body:"Microsoft YaHei","微软雅黑","PingFang SC","HarmonyOS Sans SC",sans-serif;   /* 正文:雅黑 */
-  --mono:"JetBrains Mono",Cascadia Code,Consolas,"Courier New",monospace;
+  --bg:#070708;
+  --bg-soft:#0e0e11;
+  --ink:#f2f2f4;          /* 月纸白,偏暖 */
+  --dim:#b2b2ba;
+  --faint:#8a8a94;
+  --moon:#d4a574;         /* 月光青 */
+  --amber:#d4a574;        /* 梦的温度 */
+  --line:rgba(242,242,244,.07);
+  --line-strong:rgba(242,242,244,.13);
+  --disp:"Geist","Microsoft YaHei","微软雅黑","PingFang SC","HarmonyOS Sans SC",sans-serif;   /* 标题:雅黑 */
+  --body:"Geist","Microsoft YaHei","微软雅黑","PingFang SC","HarmonyOS Sans SC",sans-serif;   /* 正文:雅黑 */
+  --mono:"GeistMono",Consolas,"Courier New",monospace;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth;scroll-padding-top:70px}
@@ -41,16 +40,16 @@ body{
 .sky{position:fixed;inset:0;pointer-events:none;z-index:0}
 .stars{position:absolute;inset:0;
   background-image:
-    radial-gradient(1px 1px at 12% 22%,rgba(233,228,214,.5) 50%,transparent 51%),
-    radial-gradient(1px 1px at 34% 8%,rgba(233,228,214,.35) 50%,transparent 51%),
-    radial-gradient(1.5px 1.5px at 58% 30%,rgba(233,228,214,.4) 50%,transparent 51%),
-    radial-gradient(1px 1px at 76% 12%,rgba(233,228,214,.5) 50%,transparent 51%),
-    radial-gradient(1px 1px at 88% 44%,rgba(233,228,214,.3) 50%,transparent 51%),
-    radial-gradient(1.5px 1.5px at 22% 58%,rgba(233,228,214,.35) 50%,transparent 51%),
-    radial-gradient(1px 1px at 46% 74%,rgba(233,228,214,.4) 50%,transparent 51%),
-    radial-gradient(1px 1px at 68% 86%,rgba(233,228,214,.3) 50%,transparent 51%),
-    radial-gradient(1.5px 1.5px at 92% 70%,rgba(233,228,214,.35) 50%,transparent 51%),
-    radial-gradient(1px 1px at 6% 88%,rgba(233,228,214,.4) 50%,transparent 51%);
+    radial-gradient(1px 1px at 12% 22%,rgba(242,242,244,.5) 50%,transparent 51%),
+    radial-gradient(1px 1px at 34% 8%,rgba(242,242,244,.35) 50%,transparent 51%),
+    radial-gradient(1.5px 1.5px at 58% 30%,rgba(242,242,244,.4) 50%,transparent 51%),
+    radial-gradient(1px 1px at 76% 12%,rgba(242,242,244,.5) 50%,transparent 51%),
+    radial-gradient(1px 1px at 88% 44%,rgba(242,242,244,.3) 50%,transparent 51%),
+    radial-gradient(1.5px 1.5px at 22% 58%,rgba(242,242,244,.35) 50%,transparent 51%),
+    radial-gradient(1px 1px at 46% 74%,rgba(242,242,244,.4) 50%,transparent 51%),
+    radial-gradient(1px 1px at 68% 86%,rgba(242,242,244,.3) 50%,transparent 51%),
+    radial-gradient(1.5px 1.5px at 92% 70%,rgba(242,242,244,.35) 50%,transparent 51%),
+    radial-gradient(1px 1px at 6% 88%,rgba(242,242,244,.4) 50%,transparent 51%);
   animation:drift 240s linear infinite alternate;
   opacity:.8;
 }
@@ -260,7 +259,8 @@ footer{border-top:1px solid var(--line);padding:10vh 0 7vh;position:relative;z-i
 @media(max-width:640px){
   .top{padding:14px 4.5vw}
   .top .tagline{display:none}
-  .top .mark,.top .state{font-size:9.5px;letter-spacing:.1em}
+  .top .state{display:none}   /* 右侧让位给"回到作品集"浮钮,避免重叠 */
+  .top .mark{font-size:9.5px;letter-spacing:.1em}
   .manuscript{padding:24px 20px}
 }
 @media(prefers-reduced-motion:reduce){
@@ -306,7 +306,7 @@ footer{border-top:1px solid var(--line);padding:10vh 0 7vh;position:relative;z-i
 /* 主卡(Dream Layer):最大,居中最高,是 View Transition 的共享元素 */
 .pop-card.main{width:min(280px,64vw);padding:30px 22px 24px;z-index:2;
   cursor:pointer;overflow:hidden;will-change:transform;
-  view-transition-name:disc-card;contain:layout;
+  
   box-shadow:rgba(0,0,0,.35) 3px 5px 30px 0}  /* Apple 唯一阴影:只给产品图(主卡即产品) */
 .folder-stage:hover .pop-card.main,.folder-stage.open .pop-card.main{
   transform:translate(-50%,-236px) rotate(0deg);transition-delay:.04s}
@@ -335,7 +335,7 @@ footer{border-top:1px solid var(--line);padding:10vh 0 7vh;position:relative;z-i
 }
 
 /* 放大过渡:光碟卡面 <-> hero 区(共享元素) */
-.hero{view-transition-name:disc-card;contain:layout}
+.hero{view-transition-name:wl-dream;contain:layout}
 ::view-transition-old(disc-card),
 ::view-transition-new(disc-card){
   animation-duration:.75s;

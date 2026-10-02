@@ -1,662 +1,282 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dream Layer — 第一双不隶属于你任何任务的眼睛</title>
-<meta name="description" content="一个让 agent 工作流在凌晨做梦的实验:强制随机配对,无目标自由联想,把白天被扔掉的碎片再看一遍。">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#070708">
+<meta name="description" content="LAMEGZ 的个人作品集:agent 的夜间与记忆系统,以及别的实验。所有数字都是真的。">
+<title>LAMEGZ - 作品、实况,和一些夜里做的事</title>
 <link rel="icon" type="image/svg+xml" href="../docs/assets/icon.svg">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
+/* ===== 设计 token,暗色排版架构 ===== */
 :root{
-  --bg:#070a10;
-  --bg-soft:#0b0f17;
-  --ink:#e9e4d6;          /* 月纸白,偏暖 */
-  --dim:#9aa2ae;
-  --faint:#5c6470;
-  --moon:#a9c6d4;         /* 月光青 */
-  --amber:#d9a878;        /* 梦的温度 */
-  --line:rgba(233,228,214,.09);
-  --line-strong:rgba(233,228,214,.18);
-  --disp:"Microsoft YaHei","微软雅黑","PingFang SC","HarmonyOS Sans SC",sans-serif;   /* 标题:雅黑 */
-  --body:"Microsoft YaHei","微软雅黑","PingFang SC","HarmonyOS Sans SC",sans-serif;   /* 正文:雅黑 */
-  --mono:"JetBrains Mono",Cascadia Code,Consolas,"Courier New",monospace;
+  color-scheme:dark;
+  --bg-1:#070708; --bg-2:#0e0e11; --bg-3:#15151a;
+  --lb-1:#f2f2f4; --lb-2:#b2b2ba; --lb-3:#8a8a94;
+  --accent:#d4a574; --accent-dim:#8f7350;
+  --sep:rgba(242,242,244,.07); --sep-strong:rgba(242,242,244,.13);
+  --wrap:1200px; --gutter:clamp(24px,5vw,48px);
+  --sans:"Geist","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  --mono:"GeistMono",ui-monospace,"Cascadia Mono",Consolas,monospace;
+  --ease:cubic-bezier(.22,1,.36,1);
 }
-*{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth;scroll-padding-top:70px}
-body{
-  background:var(--bg);
-  color:var(--ink);
-  font-family:var(--body);
-  font-size:17.5px;
-  line-height:2;
-  letter-spacing:.03em;
-  overflow-x:hidden;
-}
-::selection{background:rgba(217,168,120,.28);color:var(--ink)}
+@font-face{font-family:"Geist";src:url("fonts/Geist-var.woff2") format("woff2");
+  font-weight:100 900;font-display:swap}
+@font-face{font-family:"GeistMono";src:url("fonts/GeistMono-var.woff2") format("woff2");
+  font-weight:100 900;font-display:swap}
 
-/* ---------- 大气层:星空 / 月晕 / 噪点 ---------- */
-.sky{position:fixed;inset:0;pointer-events:none;z-index:0}
-.stars{position:absolute;inset:0;
-  background-image:
-    radial-gradient(1px 1px at 12% 22%,rgba(233,228,214,.5) 50%,transparent 51%),
-    radial-gradient(1px 1px at 34% 8%,rgba(233,228,214,.35) 50%,transparent 51%),
-    radial-gradient(1.5px 1.5px at 58% 30%,rgba(233,228,214,.4) 50%,transparent 51%),
-    radial-gradient(1px 1px at 76% 12%,rgba(233,228,214,.5) 50%,transparent 51%),
-    radial-gradient(1px 1px at 88% 44%,rgba(233,228,214,.3) 50%,transparent 51%),
-    radial-gradient(1.5px 1.5px at 22% 58%,rgba(233,228,214,.35) 50%,transparent 51%),
-    radial-gradient(1px 1px at 46% 74%,rgba(233,228,214,.4) 50%,transparent 51%),
-    radial-gradient(1px 1px at 68% 86%,rgba(233,228,214,.3) 50%,transparent 51%),
-    radial-gradient(1.5px 1.5px at 92% 70%,rgba(233,228,214,.35) 50%,transparent 51%),
-    radial-gradient(1px 1px at 6% 88%,rgba(233,228,214,.4) 50%,transparent 51%);
-  animation:drift 240s linear infinite alternate;
-  opacity:.8;
-}
-@keyframes drift{from{transform:translate3d(0,0,0)}to{transform:translate3d(-60px,30px,0)}}
-.moon{position:absolute;top:-28vh;right:-14vw;width:70vw;height:70vw;border-radius:50%;
-  background:radial-gradient(circle at 38% 38%,rgba(169,198,212,.13),rgba(169,198,212,.045) 42%,transparent 68%);
-}
-.grain{position:fixed;inset:0;pointer-events:none;z-index:3;opacity:.5;mix-blend-mode:overlay;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 240 240' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--bg-1);color:var(--lb-2);font-family:var(--sans);
+  font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
+::selection{background:var(--accent);color:#070708}
+a{color:inherit;text-decoration:none}
+.mono{font-family:var(--mono)}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 var(--gutter)}
+
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+a:active{transform:scale(.98)}
+
+/* 跨页过渡:进入作品页时,行会生长成那边的 hero */
+@media (prefers-reduced-motion:no-preference){
+  @view-transition{navigation:auto}
 }
 
-/* ---------- 顶栏 ---------- */
-.top{position:fixed;top:0;left:0;right:0;z-index:10;display:flex;justify-content:space-between;align-items:center;
-  padding:20px 4vw;font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--faint);
-  background:linear-gradient(to bottom,rgba(7,10,16,.85),transparent);
-}
-.top .mark{color:var(--dim)}
-.top .mark b{color:var(--ink);font-weight:600;letter-spacing:.2em}
-.top .state::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;
-  background:var(--amber);margin-right:9px;vertical-align:1px;
-  animation:pulse 3.2s ease-in-out infinite}
-@keyframes pulse{0%,100%{opacity:.35}50%{opacity:1}}
+/* ===== 顶栏 ===== */
+.site-head{display:flex;align-items:center;justify-content:space-between;
+  padding:20px var(--gutter);max-width:var(--wrap);margin:0 auto}
+.brand{font-family:var(--mono);font-size:15px;color:var(--lb-1);letter-spacing:.02em}
+.site-head nav{display:flex;gap:28px}
+.site-head nav a{font-size:15px;color:var(--lb-3);transition:color .22s var(--ease)}
+.site-head nav a:hover{color:var(--lb-1)}
 
-/* ---------- 布局骨架 ---------- */
-.wrap{position:relative;z-index:2;max-width:1200px;margin:0 auto;padding:0 5vw}
-section{padding:19vh 0}
-.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.32em;color:var(--moon);
-  display:flex;align-items:center;gap:16px;margin-bottom:6vh}
-.kicker::after{content:"";height:1px;width:72px;background:var(--line-strong)}
-h2{font-family:var(--disp);font-size:clamp(32px,4.2vw,48px);font-weight:600;line-height:1.2;letter-spacing:-.012em;margin-bottom:7vh}
-h2 em{font-style:normal;color:var(--amber)}
-.reveal{opacity:0;transform:translateY(16px);transition:opacity 1.3s ease,transform 1.3s cubic-bezier(.19,1,.22,1)}
-.reveal.in{opacity:1;transform:none}
-
-/* ---------- Hero ---------- */
-.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding-top:14vh;position:relative}
-.hero .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.3em;color:var(--dim);margin-bottom:4.5vh}
-.hero .eyebrow i{font-style:normal;color:var(--amber)}
-h1{font-family:var(--disp);font-size:clamp(48px,7vw,92px);font-weight:600;line-height:1.16;letter-spacing:-.015em;max-width:14em}
-h1 .under{position:relative;white-space:nowrap}
-h1 .under::after{content:"";position:absolute;left:2%;right:2%;bottom:.04em;height:1px;
-  background:linear-gradient(to right,var(--amber),transparent)}
-.hero .lede{margin-top:6vh;max-width:32em;color:var(--dim);font-size:clamp(16px,1.35vw,19px);line-height:2.2}
-.hero .lede strong{color:var(--ink);font-weight:400}
-.hero .lede .hot{color:var(--amber)}
-.hero .meta{margin-top:6.5vh;font-family:var(--mono);font-size:12px;color:var(--dim);letter-spacing:.12em;
-  display:flex;gap:12px;flex-wrap:wrap}
-.hero .meta span{border:1px solid var(--line-strong);border-radius:999px;padding:7px 18px;
-  background:rgba(11,15,23,.55);backdrop-filter:blur(6px)}
-.hero .meta span b{color:var(--ink);font-weight:400}
-
-/* ---------- 侧导航(AIHOT 式,宽屏显示) ---------- */
-.sidenav{position:fixed;left:2.2vw;top:50%;transform:translateY(-50%);z-index:9;
-  display:none;flex-direction:column;gap:20px}
-@media(min-width:1380px){.sidenav{display:flex}}
-.sidenav a{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--faint);
-  text-decoration:none;display:flex;align-items:center;gap:10px;transition:color .3s}
-.sidenav a i{font-style:normal;width:16px;height:1px;background:var(--faint);transition:width .3s,background .3s}
-.sidenav a:hover{color:var(--moon)}
-.sidenav a:hover i{width:26px;background:var(--moon)}
-
-/* 配对动画 */
-.pairing{margin-top:10vh;position:relative;min-height:300px;border-top:1px solid var(--line);
-  border-bottom:1px solid var(--line);padding:52px 0 58px}
-.pairing .frag{position:absolute;max-width:300px;padding:18px 20px 15px;
-  border:1px solid var(--line-strong);background:rgba(11,15,23,.72);backdrop-filter:blur(6px);
-  border-radius:18px;font-size:13.5px;line-height:1.9;color:var(--dim)}
-.pairing .frag .tag{font-family:var(--mono);font-size:10px;letter-spacing:.16em;display:block;margin-bottom:8px}
-.pairing .frag .ftext{display:block}
-.pairing .frag.swapping{opacity:0}
-.pairing .frag.rejected .tag{color:var(--moon)}
-.pairing .frag.hesitated .tag{color:var(--amber)}
-.pairing .frag.fa{left:4%;top:44px;animation:driftA 11s ease-in-out infinite}
-.pairing .frag.fb{right:4%;top:118px;animation:driftB 11s ease-in-out infinite;text-align:right}
-@keyframes driftA{0%,100%{transform:translate(0,0) rotate(-.4deg)}50%{transform:translate(46%,0) rotate(.4deg)}}
-@keyframes driftB{0%,100%{transform:translate(0,0) rotate(.4deg)}50%{transform:translate(-46%,0) rotate(-.4deg)}}
-.pairing .dream{position:absolute;left:50%;transform:translateX(-50%);bottom:8px;width:min(620px,84%);
-  font-size:17px;color:var(--ink);min-height:2.2em;text-align:center}
-.pairing .dream .who{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.2em;
-  color:var(--faint);margin-bottom:10px}
-.pairing .dream .caret{display:inline-block;width:.55em;border-bottom:2px solid var(--amber);
-  transform:translateY(.22em);animation:blink 1s steps(1) infinite}
-@keyframes blink{50%{opacity:0}}
-.pairing .verdict{position:absolute;right:0;top:-11px;font-family:var(--mono);font-size:10px;
-  letter-spacing:.18em;color:var(--faint);background:var(--bg);padding:0 10px}
-.pairing .verdict b{color:var(--amber);font-weight:600}
-
-/* ---------- 一夜:时间轴 ---------- */
-.night{display:grid;grid-template-columns:minmax(220px,.9fr) 2fr;gap:6vw;align-items:start}
-.clock{position:sticky;top:16vh}
-.clock .t{font-family:var(--mono);font-size:clamp(56px,7vw,96px);color:var(--ink);letter-spacing:.02em;line-height:1}
-.clock .t small{font-size:.32em;color:var(--faint);letter-spacing:.2em;display:block;margin-top:1.4em}
-.clock p{margin-top:3.2em;color:var(--faint);font-size:14.5px;line-height:2.1;max-width:16em}
-.ticks{display:flex;flex-direction:column}
-.tick{display:grid;grid-template-columns:110px 1fr;gap:3.2vw;padding:6vh 0;border-bottom:1px solid var(--line)}
-.tick:first-child{border-top:1px solid var(--line)}
-.tick .at{font-family:var(--mono);font-size:15px;color:var(--moon);letter-spacing:.08em;padding-top:.5em}
-.tick .at i{display:block;font-style:normal;font-size:10px;color:var(--faint);letter-spacing:.28em;margin-top:.8em}
-.tick h3{font-family:var(--disp);font-size:25px;font-weight:600;margin-bottom:1em;letter-spacing:.05em}
-.tick p{color:var(--dim);font-size:16px;line-height:2.15;max-width:34em}
-.tick p b{color:var(--ink);font-weight:400}
-.tick .note{margin-top:1.4em;font-family:var(--mono);font-size:11px;color:var(--faint);letter-spacing:.1em;line-height:2}
-.tick .note s{color:var(--faint);text-decoration-color:rgba(217,168,120,.6)}
-
-/* journal 手稿卡 */
-.manuscript{margin:8vh 0 0;padding:34px 38px;border:1px solid var(--line-strong);
-  background:rgba(11,15,23,.6);position:relative;border-radius:18px}
-.manuscript::before{content:"data/journal/2026-10-01.md";position:absolute;top:-9px;left:26px;
-  font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--faint);background:var(--bg);padding:0 10px}
-.manuscript pre{font-family:var(--mono);font-size:12.5px;line-height:2.05;color:var(--dim);
-  white-space:pre-wrap;letter-spacing:.01em}
-.manuscript .hl{color:var(--ink)}
-.manuscript .amb{color:var(--amber)}
-.manuscript .mn{color:var(--moon)}
-
-/* ---------- 为什么 ---------- */
-.why{position:relative}
-.why .lead{font-size:clamp(20px,2.2vw,25px);line-height:2.1;color:var(--ink);max-width:28em;margin-bottom:10vh}
-.why .lead .m{color:var(--moon)}
-.pains{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid var(--line)}
-.pain{padding:6vh 2.6vw 0 0;border-right:1px solid var(--line)}
-.pain:last-child{border-right:none}
-.pain .no{font-family:var(--mono);font-size:11px;color:var(--faint);letter-spacing:.2em}
-.pain h3{font-family:var(--disp);font-size:24px;font-weight:600;margin:1.4em 0 1em;letter-spacing:.06em}
-.pain p{color:var(--dim);font-size:15.5px;line-height:2.15}
-.pain p b{color:var(--ink);font-weight:400}
-.pain .foot{margin-top:2em;font-family:var(--mono);font-size:10.5px;color:var(--faint);letter-spacing:.12em}
-.punch{font-family:var(--disp);margin-top:10vh;font-size:clamp(24px,2.8vw,34px);line-height:2;max-width:24em;font-weight:600}
-.punch .a{color:var(--amber)}
-.punch .m{color:var(--moon)}
-
-/* ---------- 它不做的事 ---------- */
-.nots{max-width:900px}
-.not{display:grid;grid-template-columns:200px 1fr;gap:3vw;padding:5vh 0;border-bottom:1px solid var(--line);align-items:baseline}
-.not:first-child{border-top:1px solid var(--line)}
-.not .w{font-family:var(--disp);font-size:clamp(30px,3.4vw,42px);color:var(--ink);font-weight:600;letter-spacing:.08em;white-space:nowrap}
-.not .w::first-letter{color:var(--amber)}
-.not p{color:var(--dim);font-size:16px;line-height:2.15}
-.not p b{color:var(--ink);font-weight:400}
-.nots .aside{margin-top:6vh;color:var(--faint);font-size:15px;line-height:2.2;max-width:30em;
-  padding-left:calc(200px + 3vw)}
-.nots .aside .g{font-family:var(--disp);font-size:1.25em;color:var(--ink)}
-
-/* ---------- 实验 ---------- */
-.lab{display:grid;grid-template-columns:1.15fr 1fr;gap:7vw;align-items:start}
-.lab .left p{color:var(--dim);font-size:16px;line-height:2.15;max-width:31em}
-.lab .left p b{color:var(--ink);font-weight:400}
-.lab .left p+p{margin-top:2em}
-.formula{margin-top:5vh;padding:26px 30px;border:1px solid var(--line-strong);display:inline-block;
-  background:rgba(11,15,23,.6);border-radius:18px}
-.formula .f{font-family:var(--mono);font-size:13.5px;color:var(--ink);letter-spacing:.04em;line-height:2.2}
-.formula .f .m{color:var(--moon)}
-.formula .f .a{color:var(--amber)}
-.formula .cap{font-family:var(--mono);font-size:10px;color:var(--faint);letter-spacing:.22em;margin-top:12px}
-.term{border:1px solid var(--line-strong);background:#05070c;border-radius:18px;overflow:hidden}
-.term .bar{display:flex;gap:7px;padding:13px 16px;border-bottom:1px solid var(--line)}
-.term .bar i{width:9px;height:9px;border-radius:50%;background:rgba(233,228,214,.14)}
-.term .bar i:first-child{background:rgba(217,168,120,.5)}
-.term .body{padding:24px 26px 30px;font-family:var(--mono);font-size:13px;line-height:2.3;color:var(--dim)}
-.term .body .p{color:var(--moon)}
-.term .body .in{color:var(--ink)}
-.term .body .out{color:var(--faint)}
-.term .body .ok{color:var(--amber)}
-.term .body .cursor{display:inline-block;width:.6em;height:1.1em;background:var(--moon);
-  vertical-align:-.15em;animation:blink 1.1s steps(1) infinite}
-.metrics{margin-top:4.5vh;font-family:var(--mono);font-size:11.5px;color:var(--faint);line-height:2.4;letter-spacing:.08em}
-.metrics b{color:var(--dim);font-weight:400}
-.metrics .star{color:var(--amber)}
-
-/* ---------- 跑起来 ---------- */
-.oneline{color:var(--dim);font-size:16.5px;max-width:32em;line-height:2.15;margin-bottom:5vh}
-.oneline code{font-family:var(--mono);font-size:14px;color:var(--moon)}
-.runfull{font-family:var(--mono);font-size:13.5px;color:var(--dim);letter-spacing:.02em;
-  padding:22px 28px;border:1px solid var(--line-strong);display:inline-block;background:#05070c;border-radius:8px}
-.runfull .pr{color:var(--moon)}
-.runfull .fl{color:var(--amber)}
-.runfull .cm{color:var(--faint)}
-
-/* ---------- 页脚 ---------- */
-footer{border-top:1px solid var(--line);padding:10vh 0 7vh;position:relative;z-index:2}
-.coda{display:flex;justify-content:space-between;gap:6vw;flex-wrap:wrap;align-items:flex-end}
-.coda .big{font-family:var(--disp);font-size:clamp(30px,3.8vw,44px);line-height:2;max-width:15em;font-weight:600}
-.coda .big .m{color:var(--moon)}
-.coda .big .a{color:var(--amber)}
-.colophon{font-family:var(--mono);font-size:11px;color:var(--faint);letter-spacing:.12em;line-height:2.6;text-align:right}
-.colophon .ok{color:var(--moon)}
-.redlines{margin-top:7vh;font-family:var(--mono);font-size:10.5px;color:var(--faint);
-  letter-spacing:.1em;line-height:2.4;opacity:.75}
-.redlines::before{content:"红线 · 不容商量的部分";display:block;color:var(--dim);letter-spacing:.24em;margin-bottom:.6em}
-
-/* ---------- 响应式 ---------- */
-@media(max-width:960px){
-  body{font-size:16.5px}
-  section{padding:12vh 0}
-  .night{grid-template-columns:1fr}
-  .clock{position:static;margin-bottom:5vh}
-  .pains{grid-template-columns:1fr;border-top:none}
-  .pain{border-right:none;border-top:1px solid var(--line);padding:5vh 0 0;margin-bottom:5vh}
-  .lab{grid-template-columns:1fr}
-  .not{grid-template-columns:1fr;gap:1em}
-  .nots .aside{padding-left:0}
-  .pairing .frag{max-width:240px;font-size:12.5px}
-  .pairing .frag.fa{left:2%}
-  .pairing .frag.fb{right:2%}
-  .tick{grid-template-columns:80px 1fr}
-}
-@media(max-width:640px){
-  .top{padding:14px 4.5vw}
-  .top .tagline{display:none}
-  .top .mark,.top .state{font-size:9.5px;letter-spacing:.1em}
-  .manuscript{padding:24px 20px}
-}
-@media(prefers-reduced-motion:reduce){
-  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+/* ===== Hero ===== */
+.hero{padding:96px var(--gutter) 104px;max-width:var(--wrap);margin:0 auto}
+.hero h1{font-size:clamp(56px,11vw,132px);font-weight:700;line-height:1;
+  letter-spacing:-.035em;color:var(--lb-1)}
+.hero h1 sup{font-size:.28em;font-weight:500;color:var(--lb-3);vertical-align:super}
+.hero .who{margin-top:28px;font-size:clamp(19px,2.6vw,24px);color:var(--lb-1);font-weight:600;
+  letter-spacing:-.01em}
+.hero .say{margin-top:12px;max-width:34em;font-size:17px;color:var(--lb-3)}
+@media (prefers-reduced-motion:no-preference){
+  .hero>*{opacity:0;transform:translateY(16px);animation:rise .6s var(--ease) forwards}
+  .hero .who{animation-delay:.08s}.hero .say{animation-delay:.16s}
+  @keyframes rise{to{opacity:1;transform:none}}
 }
 
+/* ===== 区块标题:中文大字 + 英文小字同行 ===== */
+.sec{border-top:1px solid var(--sep);padding-block:72px 96px}
+.sec>h2{font-size:clamp(28px,4.4vw,40px);font-weight:600;letter-spacing:-.02em;
+  color:var(--lb-1);margin-bottom:40px}
+.sec>h2 small{font-family:var(--mono);font-size:13px;font-weight:400;
+  color:var(--lb-3);margin-left:14px;letter-spacing:.14em;vertical-align:.5em}
 
-/* ---------- 个人作品集主页(portfolio home) ---------- */
-#detail-view[hidden]{display:none}
-.pf-hero{view-transition-name:disc-card;contain:layout;
-  min-height:88dvh;display:grid;grid-template-columns:1.2fr .8fr;gap:4vw;
-  align-items:center;padding-top:96px}
-.pf-hero .pf-left{max-width:620px}
-.pf-hero .pf-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.3em;color:var(--dim)}
-.pf-hero h1{font-size:clamp(40px,5.5vw,76px);font-weight:600;line-height:1.12;
-  letter-spacing:-.015em;margin:26px 0 30px}
-.pf-hero .pf-sub{font-size:17px;color:var(--dim);max-width:34em;line-height:2}
-.pf-hero .pf-sub strong{color:var(--ink);font-weight:400}
-.pf-links{margin-top:44px;display:flex;gap:26px;flex-wrap:wrap}
-.pf-links a{font-family:var(--mono);font-size:12.5px;letter-spacing:.12em;color:var(--moon);
-  text-decoration:none;border-bottom:1px solid rgba(169,198,212,.3);padding-bottom:4px;
-  transition:color .3s ease,border-color .3s ease}
-.pf-links a:hover{color:var(--amber);border-color:rgba(217,168,120,.5)}
-.pf-links a:focus-visible{outline:2px solid var(--moon);outline-offset:4px}
-.pf-hero .pf-visual{display:flex;align-items:center;justify-content:center}
-.pf-hero .pf-visual svg{width:min(380px,100%);height:auto;
-  filter:drop-shadow(0 0 40px rgba(169,198,212,.18))}
+/* ===== 作品行 ===== */
+.work{display:block;padding:36px 0;border-top:1px solid var(--sep);
+  transition:background .22s var(--ease)}
+.work:first-of-type{border-top:none;padding-top:8px}
+.work:hover{background:linear-gradient(90deg,var(--bg-2),transparent 70%)}
+.work-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px}
+.work h3{font-size:clamp(22px,3vw,28px);font-weight:600;letter-spacing:-.015em;
+  color:var(--lb-1)}
+.work .go{font-family:var(--mono);font-size:13px;color:var(--lb-3);white-space:nowrap;
+  transition:color .22s var(--ease)}
+.work:hover .go{color:var(--accent)}
+.work .cat{font-family:var(--mono);font-size:13px;color:var(--lb-3);margin-bottom:10px}
+.work .pitch{margin-top:8px;max-width:36em;font-size:16px;color:var(--lb-2)}
+.work .data{margin-top:16px;display:flex;flex-wrap:wrap;gap:6px 18px;
+  font-family:var(--mono);font-size:13px;color:var(--lb-3)}
+.work .data b{font-weight:500;color:var(--lb-2)}
+.more{display:flex;justify-content:space-between;align-items:baseline;
+  padding:28px 0 4px;border-top:1px solid var(--sep-strong);margin-top:36px}
+.more span:first-child{font-size:16px;color:var(--lb-2)}
+.more .go{font-family:var(--mono);font-size:13px;color:var(--lb-3)}
+.more:hover .go{color:var(--accent)}
 
-/* 作品 bento:6 格(4 作品 + 深读入口 + GitHub),格数=内容数 */
-.work-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;
-  grid-auto-rows:minmax(230px,auto)}
-.work-card{position:relative;border:1px solid var(--line-strong);border-radius:18px;
-  padding:26px 24px;display:flex;flex-direction:column;gap:12px;
-  background:#0c1119;text-decoration:none;color:var(--ink);
-  transition:transform .45s cubic-bezier(.19,1,.22,1),border-color .35s ease}
-.work-card:hover{transform:translateY(-6px);border-color:rgba(169,198,212,.35)}
-.work-card.span2{grid-column:span 2}
-.work-card .wc-no{font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;color:var(--faint)}
-.work-card h3{font-size:21px;font-weight:600;letter-spacing:-.01em;margin:2px 0 0}
-.work-card p{font-size:14px;color:var(--dim);line-height:1.9;margin:0}
-.work-card .wc-meta{margin-top:auto;display:flex;gap:8px;flex-wrap:wrap}
-.work-card .wc-meta span{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;
-  color:var(--dim);border:1px solid var(--line-strong);border-radius:999px;padding:4px 12px}
-.work-card .wc-go{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--moon);
-  margin-top:10px}
-.work-card.tint{background:linear-gradient(165deg,#101a26,#0b1019 70%)}
-.work-card .crescent-sm{width:64px;height:auto;margin-bottom:6px;
-  filter:drop-shadow(0 0 18px rgba(169,198,212,.22))}
-.eval{display:flex;flex-direction:column;gap:7px;margin-top:4px}
-.eval .er{display:grid;grid-template-columns:86px 1fr 46px;gap:10px;align-items:center;
-  font-family:var(--mono);font-size:10px;color:var(--faint)}
-.eval .er .bars{display:flex;flex-direction:column;gap:3px}
-.eval .er .bar{height:7px;border-radius:8px;background:#1a2432;overflow:hidden}
-.eval .er .bar i{display:block;height:100%;border-radius:8px;background:#3d5a75}
-.eval .er .bar.hot i{background:var(--amber)}
-@media(max-width:900px){
-  .pf-hero{grid-template-columns:1fr;min-height:auto;padding-top:72px}
-  .pf-hero .pf-visual{display:none}
-  .work-grid{grid-template-columns:1fr}
-  .work-card.span2{grid-column:span 1}
+/* ===== 实况 ===== */
+.live-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.cell{background:var(--bg-2);border-radius:16px;padding:24px;min-height:132px;
+  display:flex;flex-direction:column;justify-content:space-between}
+.cell .lb{font-family:var(--mono);font-size:13px;color:var(--lb-3)}
+.cell .v{font-family:var(--mono);font-size:26px;font-weight:500;color:var(--lb-1);
+  letter-spacing:-.01em}
+.cell .v a:hover{color:var(--accent)}
+.cell .note{font-size:13px;color:var(--lb-3)}
+.cell.dim{background:transparent;border:1px dashed var(--sep-strong)}
+.cell.dim .v{color:var(--lb-3);font-weight:400}
+.cell.is-live .v{color:var(--accent);font-variant-numeric:tabular-nums}
+
+/* ===== 联系 ===== */
+.else-row{display:flex;align-items:baseline;gap:24px;padding:22px 0;
+  border-top:1px solid var(--sep);transition:padding-left .22s var(--ease)}
+.else-row:hover{padding-left:8px}
+.else-row .no{font-family:var(--mono);font-size:13px;color:var(--lb-3)}
+.else-row .name{font-size:19px;font-weight:600;color:var(--lb-1);min-width:140px}
+.else-row .use{font-size:15px;color:var(--lb-3);flex:1}
+.else-row .go{font-family:var(--mono);font-size:13px;color:var(--lb-3)}
+.else-row:hover .go{color:var(--accent)}
+.else-row:first-of-type{border-top:none}
+
+footer{border-top:1px solid var(--sep);padding:28px var(--gutter) 40px;
+  max-width:var(--wrap);margin:0 auto;font-family:var(--mono);font-size:13px;
+  color:var(--lb-3)}
+
+/* ===== 移动端 ===== */
+@media (max-width:820px){
+  .live-grid{grid-template-columns:repeat(2,1fr)}
+  .else-row{flex-wrap:wrap;gap:8px 16px}
 }
-
-/* ---------- Q 版文件夹开场(disc view) ---------- */
-#disc-view{position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;gap:30px;background:var(--bg);cursor:default}
-#disc-view[hidden]{display:none}
-
-.folder-stage{position:relative;width:min(400px,86vw);height:min(400px,64vh);cursor:pointer;
-  display:flex;align-items:flex-end;justify-content:center;outline:none}
-.folder-stage .folder-svg{width:min(320px,72vw);height:auto;overflow:visible;
-  animation:wiggle 7s ease-in-out infinite;transform-origin:50% 90%}
-@keyframes wiggle{0%,100%{transform:rotate(0)}30%{transform:rotate(-1.1deg)}65%{transform:rotate(1.1deg)}}
-.folder-stage:hover .folder-svg,.folder-stage.open .folder-svg{animation-play-state:paused}
-.folder-lid{transform-box:fill-box;transform-origin:50% 100%;
-  transition:transform .5s cubic-bezier(.19,1,.22,1)}
-.folder-stage:hover .folder-lid,.folder-stage.open .folder-lid{
-  transform:rotateX(-24deg) translateY(-8px)}
-
-/* 卡片组:默认藏在文件夹里 */
-.pop-card{position:absolute;left:50%;bottom:120px;width:172px;padding:20px 18px 18px;
-  border-radius:18px;background:linear-gradient(165deg,#101722,#0a0e15 65%);
-  border:1px solid var(--line-strong);color:var(--ink);text-decoration:none;
-  display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;
-  opacity:0;pointer-events:none;transform:translate(-50%,46px) rotate(0deg);
-  transition:transform .6s cubic-bezier(.19,1,.22,1),opacity .45s ease,border-color .35s ease}
-.pop-card .pc-title{font-family:var(--mono);font-size:12.5px;letter-spacing:.2em}
-.pop-card .pc-title.dim{color:var(--dim)}
-.pop-card .pc-sub{font-size:11.5px;color:var(--faint);letter-spacing:.06em}
-.pop-card .pc-plus{font-size:26px;color:var(--faint);line-height:1}
-.pop-card.gh svg{color:var(--moon)}
-.pop-card.soon{border-style:dashed;background:rgba(16,23,34,.5)}
-.folder-stage:hover .pop-card,.folder-stage.open .pop-card{opacity:1;pointer-events:auto}
-.folder-stage:hover .pop-card.gh,.folder-stage.open .pop-card.gh{
-  transform:translate(-172%,-118px) rotate(-7deg);transition-delay:.12s}
-.folder-stage:hover .pop-card.soon,.folder-stage.open .pop-card.soon{
-  transform:translate(72%,-110px) rotate(6deg);transition-delay:.18s}
-.pop-card.gh:hover{border-color:rgba(169,198,212,.4)}
-
-/* 主卡(Dream Layer):最大,居中最高,是 View Transition 的共享元素 */
-.pop-card.main{width:min(280px,64vw);padding:30px 22px 24px;z-index:2;
-  cursor:pointer;overflow:hidden;will-change:transform;
-  view-transition-name:disc-card;contain:layout;
-  box-shadow:rgba(0,0,0,.35) 3px 5px 30px 0}  /* Apple 唯一阴影:只给产品图(主卡即产品) */
-.folder-stage:hover .pop-card.main,.folder-stage.open .pop-card.main{
-  transform:translate(-50%,-236px) rotate(0deg);transition-delay:.04s}
-.pop-card.main:hover{box-shadow:rgba(0,0,0,.4) 4px 7px 36px 0}
-.pop-card.main .shine{position:absolute;inset:0;pointer-events:none;opacity:0;
-  background:radial-gradient(420px circle at var(--mx,50%) var(--my,50%),rgba(233,228,214,.10),transparent 55%);
-  transition:opacity .4s ease}
-.pop-card.main:hover .shine{opacity:1}
-.pop-card.main svg.moonmark{width:52%;height:auto;margin-bottom:18px;
-  filter:drop-shadow(0 0 26px rgba(169,198,212,.25))}
-.pop-card.main .disc-title{font-family:var(--mono);font-size:14px;font-weight:600;
-  letter-spacing:.4em;color:var(--ink);text-indent:.4em}
-.pop-card.main .disc-tag{margin-top:12px;font-size:12.5px;color:var(--dim);letter-spacing:.1em}
-.pop-card.main .disc-hint{margin-top:16px;font-family:var(--mono);font-size:9.5px;
-  letter-spacing:.28em;color:var(--faint);transition:color .3s ease}
-.pop-card.main:hover .disc-hint{color:var(--amber)}
-
-.disc-foot{font-family:var(--mono);font-size:11px;letter-spacing:.22em;color:var(--faint)}
-#detail-view[hidden]{display:none}
-
-@media(max-width:640px){
-  .folder-stage{height:380px}
-  .folder-stage:hover .pop-card.gh,.folder-stage.open .pop-card.gh{transform:translate(-158%,-96px) rotate(-7deg)}
-  .folder-stage:hover .pop-card.soon,.folder-stage.open .pop-card.soon{transform:translate(58%,-92px) rotate(6deg)}
-  .folder-stage:hover .pop-card.main,.folder-stage.open .pop-card.main{transform:translate(-50%,-208px)}
+@media (max-width:560px){
+  .live-grid{grid-template-columns:1fr}
+  .hero{padding:72px var(--gutter) 80px}
+  .sec{padding-block:56px 72px}
+  .cell{min-height:104px;padding:20px}
 }
-
-/* 放大过渡:光碟卡面 <-> hero 区(共享元素) */
-.hero{contain:layout}
-::view-transition-old(disc-card),
-::view-transition-new(disc-card){
-  animation-duration:.75s;
-  animation-timing-function:cubic-bezier(.65,0,.2,1);
-  border-radius:18px;
+@media (prefers-reduced-motion:reduce){
+  .work,.else-row,.go{transition:none}
+  .work:hover{background:none}
+  .else-row:hover{padding-left:0}
 }
-::view-transition-old(disc-card){animation-name:disc-out}
-::view-transition-new(disc-card){animation-name:disc-in}
-@keyframes disc-out{to{opacity:0}}
-@keyframes disc-in{from{opacity:.35}}
-
-/* 收回光碟按钮 */
-.back-disc{position:fixed;top:18px;right:4vw;z-index:30;
-  font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--dim);
-  background:rgba(11,15,23,.72);border:1px solid var(--line-strong);border-radius:999px;
-  padding:9px 20px;cursor:pointer;backdrop-filter:blur(8px);
-  transition:color .3s ease,border-color .3s ease}
-.back-disc:hover{color:var(--amber);border-color:rgba(217,168,120,.4)}
-.back-disc:active{transform:scale(.95)}   /* Apple 系统级按压微交互 */
-.back-disc{padding:12px 22px}             /* 触控靶 ≥44px */
-.back-disc:focus-visible{outline:2px solid var(--moon);outline-offset:3px}
-:where(a,button,[role="button"],[tabindex]):focus-visible{
-  outline:2px solid var(--moon);outline-offset:3px;border-radius:4px}
-#disc-view.fade-in,#detail-view.fade-in{animation:fadeSwap .45s ease}
-@keyframes fadeSwap{from{opacity:0}to{opacity:1}}
-@view-transition{navigation:auto}
 </style>
 </head>
 <body>
 
-<div class="sky"><div class="stars"></div><div class="moon"></div></div>
-<div class="grain"></div>
-
-<!-- ============ Q 版文件夹:悬停展开卡片,点卡放大入梦 ============ -->
-<div id="disc-view">
-  <div class="folder-stage" id="folderStage" role="button" tabindex="0"
-       aria-label="作品文件夹:悬停或轻触展开">
-    <!-- 卡片组:从文件夹里扇形长出 -->
-    <a class="pop-card gh" href="https://github.com/LameGz/dream-layer" target="_blank" rel="noopener">
-      <svg viewBox="0 0 16 16" width="26" height="26" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
-      <div class="pc-title">GitHub</div>
-      <div class="pc-sub">仓库与源码 ↗</div>
-    </a>
-    <div class="pop-card soon" aria-disabled="true">
-      <div class="pc-plus">+</div>
-      <div class="pc-title dim">下一站</div>
-      <div class="pc-sub">coming soon</div>
-    </div>
-    <div class="pop-card main" id="discCard" role="button" tabindex="0" aria-label="进入 LameGz 作品集">
-      <div class="shine"></div>
-      <svg class="moonmark" viewBox="0 0 1024 1024" aria-hidden="true">
-        <defs>
-          <linearGradient id="dmoon" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stop-color="#c6dae6"/>
-            <stop offset="100%" stop-color="#8fb3c2"/>
-          </linearGradient>
-          <radialGradient id="dglow" cx="0.5" cy="0.5" r="0.5">
-            <stop offset="0%" stop-color="#d9a878" stop-opacity="0.30"/>
-            <stop offset="100%" stop-color="#d9a878" stop-opacity="0"/>
-          </radialGradient>
-        </defs>
-        <path d="M 460 212 A 300 300 0 1 0 460 812 A 340 340 0 0 1 460 212 Z" fill="url(#dmoon)"/>
-        <circle cx="500" cy="512" r="118" fill="url(#dglow)"/>
-        <circle cx="500" cy="512" r="42" fill="#d9a878"/>
-        <circle cx="488" cy="500" r="10" fill="#e9e4d6" opacity="0.85"/>
-      </svg>
-      <div class="disc-title">LAMEGZ</div>
-      <div class="disc-tag">作品集 · 夜间与记忆系统</div>
-      <div class="disc-hint">点击开门 · CLICK TO OPEN</div>
-    </div>
-    <!-- Q 版文件夹本体 -->
-    <svg class="folder-svg" viewBox="0 0 320 250" aria-hidden="true">
-      <defs>
-        <linearGradient id="folderFront" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#28405a"/>
-          <stop offset="100%" stop-color="#1a2a3c"/>
-        </linearGradient>
-      </defs>
-      <ellipse cx="160" cy="232" rx="120" ry="14" fill="#000" opacity="0.38"/>
-      <!-- 后片 + 标签页 -->
-      <rect x="42" y="66" width="236" height="152" rx="18" fill="#141f2b"/>
-      <rect x="42" y="46" width="96" height="38" rx="13" fill="#141f2b"/>
-      <!-- 前片(hover 掀起) -->
-      <g class="folder-lid">
-        <rect x="42" y="96" width="236" height="122" rx="18" fill="url(#folderFront)"/>
-        <rect x="42" y="96" width="236" height="14" rx="7" fill="#e9e4d6" opacity="0.07"/>
-        <!-- 月牙贴纸 -->
-        <g transform="translate(160,150) rotate(-9)">
-          <rect x="-42" y="-46" width="84" height="92" rx="10" fill="#e9e4d6" opacity="0.94"/>
-          <path d="M -2 -34 A 26 26 0 1 0 -2 22 A 30 30 0 0 1 -2 -34 Z" fill="#8fb3c2"/>
-          <circle cx="3" cy="-6" r="4.6" fill="#d9a878"/>
-        </g>
-      </g>
-    </svg>
-  </div>
-  <p class="disc-foot">LAMEGZ · 个人作品集 · 夜间系统与工程记忆 · 全部开源</p>
-</div>
-
-<div id="detail-view" hidden>
-<button class="back-disc" id="backDisc" aria-label="收回光碟">◉ 收回光碟</button>
-
-<header class="top">
-  <div class="mark"><b>LAMEGZ</b><span class="tagline">&nbsp;&nbsp;·&nbsp;&nbsp;作品集 · 夜间与记忆系统</span></div>
-  <div class="state">独立开发 · 全部开源 · <span style="color:var(--amber)">179 tests</span></div>
+<header class="site-head">
+  <a class="brand" href="./">LAMEGZ™</a>
+  <nav>
+    <a href="#works">作品</a>
+    <a href="#live">实况</a>
+    <a href="#elsewhere">联系</a>
+  </nav>
 </header>
 
-<nav class="sidenav">
-  <a href="#top"><i></i>主页</a>
-  <a href="#works"><i></i>作品</a>
-  <a href="https://github.com/LameGz" target="_blank" rel="noopener"><i></i>GitHub ↗</a>
-  <a href="#agents"><i></i>Agent 接入</a>
-</nav>
+<main>
 
-<div class="wrap">
+  <section class="hero">
+    <h1>LAMEGZ<sup>™</sup></h1>
+    <p class="who">造 agent 的夜间与记忆系统。</p>
+    <p class="say">白天写代码,晚上让代码自己做梦。这里放我做出来的东西,和它们真实的数字。</p>
+  </section>
 
-  <!-- ============ 个人作品集主页 ============ -->
-  <section class="pf-hero" id="top">
-    <div class="pf-left">
-      <p class="pf-eyebrow">LAMEGZ · 独立开发 · AGENT 工具链</p>
-      <h1>造 agent 的<br>夜间与记忆系统</h1>
-      <p class="pf-sub">
-        <strong>Dream Layer</strong> 让 agent 在凌晨做梦,<strong>Synapse</strong> 让它记得做过的工程。
-        独立开发,全部开源,零外部服务。
-      </p>
-      <div class="pf-links">
-        <a href="https://github.com/LameGz" target="_blank" rel="noopener">GITHUB ↗</a>
-        <a href="https://linux.do/u/lame1255/summary" target="_blank" rel="noopener">LINUX.DO ↗</a>
-        <a href="#works">精选作品 ↓</a>
+  <section id="works" class="sec wrap">
+    <h2>作品<small>WORKS</small></h2>
+
+    <a class="work" href="works/dream-layer/" style="view-transition-name:wl-dream">
+      <p class="cat">开源 · agent 夜间系统</p>
+      <div class="work-head">
+        <h3>Dream Layer</h3>
+        <span class="go">详情 →</span>
+      </div>
+      <p class="pitch">让 agent 学会做梦:把白天被扔掉的碎片重新捞起来,长成第二天早上的启发。</p>
+      <p class="data"><span><b>189</b> 个测试全绿</span><span><b>54</b> 天跨期锚点</span><span><b>0</b> 语义依赖</span><span>MIT</span></p>
+    </a>
+
+    <a class="work" href="works/synapse-graph-skills/">
+      <p class="cat">Claude Code 技能 · 图式记忆</p>
+      <div class="work-head">
+        <h3>Synapse Graph Skills</h3>
+        <span class="go">详情 →</span>
+      </div>
+      <p class="pitch">把"记得这次改了什么"从聊天记录搬进文件图谱,Markdown 是唯一真相。</p>
+      <p class="data"><span><b>11</b> 个 star</span><span>文件读取 <b>12 → 6</b></span><span>无关文件 <b>5 → 0</b></span><span>断言 <b>75% → 100%</b></span></p>
+    </a>
+
+    <a class="work" href="works/obsidian-base-builder/">
+      <p class="cat">知识库手册 · PARA</p>
+      <div class="work-head">
+        <h3>Obsidian Base Builder</h3>
+        <span class="go">详情 →</span>
+      </div>
+      <p class="pitch">从零搭一套顺手的 Obsidian:目录、模板、插件、Git 备份,一套手册讲完。</p>
+      <p class="data"><span><b>13</b> 个 star</span><span><b>5</b> 份模板</span><span><b>5</b> 个插件</span><span>Git 自动备份</span></p>
+    </a>
+
+    <a class="work" href="works/camerasync/">
+      <p class="cat">桌面小工具 · 照片导入</p>
+      <div class="work-head">
+        <h3>CameraSync</h3>
+        <span class="go">详情 →</span>
+      </div>
+      <p class="pitch">相机照片导入电脑,不用再一层层翻文件夹:插上、选日期、下载。</p>
+      <p class="data"><span><b>3</b> 步搞定</span><span>批量下载</span><span>自选路径</span></p>
+    </a>
+
+    <a class="more" href="https://github.com/LameGz" rel="noopener">
+      <span>更多实验和半成品,都丢在 GitHub 上</span>
+      <span class="go">github.com/LameGz ↗</span>
+    </a>
+  </section>
+
+  <section id="live" class="sec wrap">
+    <h2>实况<small>LIVE</small></h2>
+    <div class="live-grid">
+      <div class="cell is-live">
+        <span class="lb">你已停留</span>
+        <span class="v" id="dwell">0:00</span>
+        <span class="note">这一页只属于你</span>
+      </div>
+      <div class="cell">
+        <span class="lb">dream-layer</span>
+        <span class="v"><a href="https://github.com/LameGz/dream-layer" rel="noopener">0 star · 0 fork</a></span>
+        <span class="note">2026-10-01 开源,昨天的事</span>
+      </div>
+      <div class="cell">
+        <span class="lb">你的屏幕</span>
+        <span class="v" id="vp">…</span>
+        <span class="note">本页构建于 2026-10-02</span>
+      </div>
+      <div class="cell dim">
+        <span class="lb">做梦夜数</span>
+        <span class="v">待接入</span>
+        <span class="note">数据线还没接</span>
+      </div>
+      <div class="cell dim">
+        <span class="lb">晨报确认数</span>
+        <span class="v">待接入</span>
+        <span class="note">等 8 周实验期跑完</span>
+      </div>
+      <div class="cell dim">
+        <span class="lb">测试</span>
+        <span class="v">189 passed</span>
+        <span class="note">pytest,每次提交前跑</span>
       </div>
     </div>
-    <div class="pf-visual" aria-hidden="true">
-      <svg viewBox="0 0 1024 1024">
-        <defs>
-          <linearGradient id="pvmoon" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stop-color="#c6dae6"/>
-            <stop offset="100%" stop-color="#8fb3c2"/>
-          </linearGradient>
-          <radialGradient id="pvglow" cx="0.5" cy="0.5" r="0.5">
-            <stop offset="0%" stop-color="#d9a878" stop-opacity="0.30"/>
-            <stop offset="100%" stop-color="#d9a878" stop-opacity="0"/>
-          </radialGradient>
-        </defs>
-        <path d="M 460 212 A 300 300 0 1 0 460 812 A 340 340 0 0 1 460 212 Z" fill="url(#pvmoon)"/>
-        <circle cx="500" cy="512" r="118" fill="url(#pvglow)"/>
-        <circle cx="500" cy="512" r="42" fill="#d9a878"/>
-        <circle cx="488" cy="500" r="10" fill="#e9e4d6" opacity="0.85"/>
-      </svg>
-    </div>
   </section>
 
-  <!-- ============ 精选作品 ============ -->
-  <section id="works">
-    <p class="kicker">精选作品 · SELECTED WORKS</p>
-    <h2>四件东西,<br>都<em>开源</em>。</h2>
-    <div class="work-grid">
-      <a class="work-card span2 tint" href="works/dream-layer/index.html" style="view-transition-name:wl-dream">
-        <svg class="crescent-sm" viewBox="0 0 1024 1024" aria-hidden="true">
-          <path d="M 460 212 A 300 300 0 1 0 460 812 A 340 340 0 0 1 460 212 Z" fill="#c6dae6"/>
-          <circle cx="500" cy="512" r="42" fill="#d9a878"/>
-        </svg>
-        <div class="wc-no">作品 01 · PYTHON · 179 TESTS</div>
-        <h3>Dream Layer</h3>
-        <p>agent 工作流的 REM 层:夜里把流经系统的碎片(包括被拒的)强制随机配对、高温碰撞,早上产出 ≤3 条观察与问题。相似度禁止入配对。</p>
-        <div class="wc-meta"><span>Python</span><span>179 tests</span><span>零外部服务</span></div>
-        <div class="wc-go">进入作品页 →</div>
-      </a>
-      <a class="work-card" href="works/synapse-graph-skills/index.html" target="_blank" rel="noopener">
-        <div class="wc-no">作品 02 · SHELL/PYTHON · ★11</div>
-        <h3>Synapse Graph Skills</h3>
-        <p>编码代理的图式工程记忆:meta/*.md 节点 + 自动 MEMORY_MAP,无缝写入读出,跨宿主可插拔,零依赖。</p>
-        <div class="eval">
-          <div class="er"><span>文件读取</span><span class="bars"><span class="bar"><i style="width:100%"></i></span><span class="bar hot"><i style="width:50%"></i></span></span><span>-50%</span></div>
-          <div class="er"><span>无关文件</span><span class="bars"><span class="bar"><i style="width:100%"></i></span><span class="bar hot"><i style="width:2%"></i></span></span><span>→0</span></div>
-          <div class="er"><span>断言通过</span><span class="bars"><span class="bar"><i style="width:75%"></i></span><span class="bar hot"><i style="width:100%"></i></span></span><span>100%</span></div>
-        </div>
-        <div class="wc-go">仓库 ↗</div>
-      </a>
-      <a class="work-card" href="works/obsidian-base-builder/index.html" target="_blank" rel="noopener">
-        <div class="wc-no">作品 03 · TUTORIAL · ★13</div>
-        <h3>Obsidian Base Builder</h3>
-        <p>从零搭建个人知识库的实战手册:PARA 目录、5 份 Templater 模板、Git 自动备份、Claude 剪藏工作流。</p>
-        <div class="wc-meta"><span>PARA</span><span>Obsidian</span><span>★13</span></div>
-        <div class="wc-go">仓库 ↗</div>
-      </a>
-      <a class="work-card" href="works/camerasync/index.html" target="_blank" rel="noopener">
-        <div class="wc-no">作品 04 · PYTHON</div>
-        <h3>CameraSync</h3>
-        <p>相机照片导入工具:MTP/PTP 一键扫描,按拍摄日期筛选,批量下载三步搞定。</p>
-        <div class="wc-meta"><span>Python</span><span>MTP/PTP</span></div>
-        <div class="wc-go">仓库 ↗</div>
-      </a>
-      <a class="work-card" href="https://github.com/LameGz" target="_blank" rel="noopener">
-        <div class="wc-no">GITHUB · @LAMEGZ</div>
-        <h3>更多小作品</h3>
-        <p>工具、实验、半成品——都在仓库里躺着,欢迎翻。</p>
-        <div class="wc-go">github.com/LameGz ↗</div>
-      </a>
-    </div>
+  <section id="elsewhere" class="sec wrap">
+    <h2>联系<small>ELSEWHERE</small></h2>
+    <a class="else-row" href="https://github.com/LameGz" rel="noopener">
+      <span class="no">01</span>
+      <span class="name">GitHub</span>
+      <span class="use">所有代码和半成品都在这</span>
+      <span class="go">github.com/LameGz ↗</span>
+    </a>
+    <a class="else-row" href="https://linux.do/u/lame1255/summary" rel="noopener">
+      <span class="no">02</span>
+      <span class="name">Linux.do</span>
+      <span class="use">偶尔也在论坛冒泡</span>
+      <span class="go">linux.do/u/lame1255 ↗</span>
+    </a>
   </section>
 
-  
-</div><!-- /#detail-view -->
+</main>
+
+<footer>© 2026 LAMEGZ · 静态页,无追踪脚本</footer>
 
 <script>
-/* ---------- 文件夹开场 + View Transitions(跨文档 MPA 过渡) ---------- */
 (function(){
-  const discView = document.getElementById("disc-view");
-  const detailView = document.getElementById("detail-view");
-  const stage = document.getElementById("folderStage");
-  const card = document.getElementById("discCard");
-  const shine = card.querySelector(".shine");
-  const rise = window.matchMedia("(max-width: 640px)").matches ? "-208px" : "-236px";
-  let raf = null;
-
-  function swap(toDetail){
-    return function(){
-      discView.hidden = toDetail;
-      detailView.hidden = !toDetail;
-      window.scrollTo(0, 0);
-    };
+  var t0=Date.now(),d=document.getElementById("dwell");
+  function tick(){
+    var s=Math.floor((Date.now()-t0)/1000);
+    d.textContent=Math.floor(s/60)+":"+String(s%60).padStart(2,"0");
   }
-  function go(toDetail){
-    if(document.startViewTransition){ document.startViewTransition(swap(toDetail)); }
-    else{
-      const el = toDetail ? detailView : discView;
-      el.classList.add("fade-in");
-      swap(toDetail)();
-      setTimeout(() => el.classList.remove("fade-in"), 500);
-    }
-  }
-  card.addEventListener("click", (e) => { e.stopPropagation(); go(true); });
-  card.addEventListener("keydown", (e) => {
-    if(e.key === "Enter" || e.key === " "){ e.preventDefault(); e.stopPropagation(); go(true); }
-  });
-  document.getElementById("backDisc").addEventListener("click", () => go(false));
-
-  stage.addEventListener("click", (e) => {
-    if(e.target.closest(".pop-card")) return;
-    stage.classList.toggle("open");
-  });
-  stage.addEventListener("keydown", (e) => {
-    if(e.key === "Enter" || e.key === " "){ e.preventDefault(); stage.classList.toggle("open"); }
-  });
-  document.addEventListener("click", (e) => {
-    if(!e.target.closest("#folderStage")) stage.classList.remove("open");
-  });
-
-  card.addEventListener("mousemove", (e) => {
-    if(window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const r = card.getBoundingClientRect();
-    const px = (e.clientX - r.left) / r.width;
-    const py = (e.clientY - r.top) / r.height;
-    if(raf) cancelAnimationFrame(raf);
-    raf = requestAnimationFrame(() => {
-      card.style.transform =
-        `translate(-50%,${rise}) perspective(900px) rotateY(${(px - .5) * 9}deg) rotateX(${(.5 - py) * 7}deg) translateZ(14px)`;
-      card.style.setProperty("--mx", (px * 100) + "%");
-      card.style.setProperty("--my", (py * 100) + "%");
-    });
-  });
-  card.addEventListener("mouseleave", () => {
-    if(raf) cancelAnimationFrame(raf);
-    card.style.transform = "";
-  });
+  tick();setInterval(tick,1000);
+  var vp=document.getElementById("vp");
+  function size(){vp.textContent=innerWidth+"×"+innerHeight}
+  size();addEventListener("resize",size);
 })();
 </script>
+
 </body>
 </html>
