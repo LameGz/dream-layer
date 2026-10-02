@@ -266,12 +266,95 @@ footer{border-top:1px solid var(--line);padding:10vh 0 7vh;position:relative;z-i
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
 }
+
+/* ---------- 光碟开场(disc view) ---------- */
+#disc-view{position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:34px;background:var(--bg);cursor:default}
+#disc-view[hidden]{display:none}
+.disc-card{position:relative;width:min(330px,78vw);aspect-ratio:330/430;border-radius:22px;
+  background:linear-gradient(160deg,#101722 0%,#0a0e15 60%);
+  border:1px solid var(--line-strong);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;
+  cursor:pointer;overflow:hidden;
+  transform-style:preserve-3d;will-change:transform;
+  transition:transform .5s cubic-bezier(.19,1,.22,1),box-shadow .5s ease;
+  box-shadow:0 24px 80px rgba(0,0,0,.55),0 0 0 rgba(217,168,120,0);
+  view-transition-name:disc-card;contain:layout}
+.disc-card:hover{box-shadow:0 40px 110px rgba(0,0,0,.65),0 0 90px rgba(217,168,120,.10)}
+.disc-card .shine{position:absolute;inset:0;pointer-events:none;opacity:0;
+  background:radial-gradient(420px circle at var(--mx,50%) var(--my,50%),rgba(233,228,214,.10),transparent 55%);
+  transition:opacity .4s ease}
+.disc-card:hover .shine{opacity:1}
+.disc-card svg.moonmark{width:56%;height:auto;margin-bottom:30px;
+  filter:drop-shadow(0 0 26px rgba(169,198,212,.25))}
+.disc-card .disc-title{font-family:var(--mono);font-size:15px;font-weight:500;
+  letter-spacing:.42em;color:var(--ink);text-indent:.42em}
+.disc-card .disc-tag{margin-top:16px;font-size:13.5px;color:var(--dim);letter-spacing:.14em}
+.disc-card .disc-hint{position:absolute;bottom:24px;left:0;right:0;text-align:center;
+  font-family:var(--mono);font-size:10px;letter-spacing:.3em;color:var(--faint);
+  transition:color .3s ease}
+.disc-card:hover .disc-hint{color:var(--amber)}
+.disc-foot{font-family:var(--mono);font-size:11px;letter-spacing:.22em;color:var(--faint)}
+#detail-view[hidden]{display:none}
+
+/* 放大过渡:光碟卡面 <-> hero 区(共享元素) */
+.hero{view-transition-name:disc-card;contain:layout}
+::view-transition-old(disc-card),
+::view-transition-new(disc-card){
+  animation-duration:.75s;
+  animation-timing-function:cubic-bezier(.65,0,.2,1);
+  border-radius:22px;
+}
+::view-transition-old(disc-card){animation-name:disc-out}
+::view-transition-new(disc-card){animation-name:disc-in}
+@keyframes disc-out{to{opacity:0}}
+@keyframes disc-in{from{opacity:.35}}
+
+/* 收回光碟按钮 */
+.back-disc{position:fixed;top:18px;right:4vw;z-index:30;
+  font-family:var(--mono);font-size:11px;letter-spacing:.2em;color:var(--dim);
+  background:rgba(11,15,23,.72);border:1px solid var(--line-strong);border-radius:999px;
+  padding:9px 20px;cursor:pointer;backdrop-filter:blur(8px);
+  transition:color .3s ease,border-color .3s ease}
+.back-disc:hover{color:var(--amber);border-color:rgba(217,168,120,.4)}
+#disc-view.fade-in,#detail-view.fade-in{animation:fadeSwap .45s ease}
+@keyframes fadeSwap{from{opacity:0}to{opacity:1}}
 </style>
 </head>
 <body>
 
 <div class="sky"><div class="stars"></div><div class="moon"></div></div>
 <div class="grain"></div>
+
+<!-- ============ 光碟开场:一张碟,点击入梦 ============ -->
+<div id="disc-view">
+  <div class="disc-card" id="discCard" role="button" tabindex="0" aria-label="进入 Dream Layer 介绍页">
+    <div class="shine"></div>
+    <svg class="moonmark" viewBox="0 0 1024 1024" aria-hidden="true">
+      <defs>
+        <linearGradient id="dmoon" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#c6dae6"/>
+          <stop offset="100%" stop-color="#8fb3c2"/>
+        </linearGradient>
+        <radialGradient id="dglow" cx="0.5" cy="0.5" r="0.5">
+          <stop offset="0%" stop-color="#d9a878" stop-opacity="0.30"/>
+          <stop offset="100%" stop-color="#d9a878" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <path d="M 460 212 A 300 300 0 1 0 460 812 A 340 340 0 0 1 460 212 Z" fill="url(#dmoon)"/>
+      <circle cx="500" cy="512" r="118" fill="url(#dglow)"/>
+      <circle cx="500" cy="512" r="42" fill="#d9a878"/>
+      <circle cx="488" cy="500" r="10" fill="#e9e4d6" opacity="0.85"/>
+    </svg>
+    <div class="disc-title">DREAM LAYER</div>
+    <div class="disc-tag">第一双不隶属于你任何任务的眼睛</div>
+    <div class="disc-hint">点击入梦 · CLICK TO ENTER</div>
+  </div>
+  <p class="disc-foot">一个让 agent 工作流在凌晨做梦的实验 · 自用开源 · 179 个测试守着</p>
+</div>
+
+<div id="detail-view" hidden>
+<button class="back-disc" id="backDisc" aria-label="收回光碟">◉ 收回光碟</button>
 
 <header class="top">
   <div class="mark"><b>DREAM&nbsp;LAYER</b><span class="tagline">&nbsp;&nbsp;·&nbsp;&nbsp;凌晨三点,它替你看一遍</span></div>
@@ -511,6 +594,67 @@ open_question: 上次反对的理由是现金流——这个理由,现在还成�
     </div>
   </div>
 </footer>
+
+</div><!-- /#detail-view -->
+
+<script>
+/* ---------- 光碟开场:点击 -> 放大占屏 -> 进入详情(View Transitions,降级淡入) ---------- */
+(function(){
+  const discView = document.getElementById("disc-view");
+  const detailView = document.getElementById("detail-view");
+  const card = document.getElementById("discCard");
+  const backBtn = document.getElementById("backDisc");
+
+  function swap(toDetail){
+    return function(){
+      if(toDetail){
+        discView.hidden = true;
+        detailView.hidden = false;
+        window.scrollTo(0, 0);
+      } else {
+        detailView.hidden = true;
+        discView.hidden = false;
+        window.scrollTo(0, 0);
+      }
+    };
+  }
+  function go(toDetail){
+    const vt = document.startViewTransition && document.startViewTransition(swap(toDetail));
+    if(!vt){
+      const el = toDetail ? detailView : discView;
+      el.classList.add("fade-in");
+      swap(toDetail)();
+      setTimeout(() => el.classList.remove("fade-in"), 500);
+    }
+  }
+  card.addEventListener("click", () => go(true));
+  card.addEventListener("keydown", (e) => {
+    if(e.key === "Enter" || e.key === " "){ e.preventDefault(); go(true); }
+  });
+  backBtn.addEventListener("click", () => go(false));
+
+  /* 光标跟随的 3D 倾斜 + 高光(只在光碟态) */
+  const shine = card.querySelector(".shine");
+  let raf = null;
+  card.addEventListener("mousemove", (e) => {
+    if(window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const r = card.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width;
+    const py = (e.clientY - r.top) / r.height;
+    if(raf) cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(() => {
+      card.style.transform =
+        `perspective(900px) rotateY(${(px - .5) * 10}deg) rotateX(${(.5 - py) * 8}deg) translateY(-8px)`;
+      card.style.setProperty("--mx", (px * 100) + "%");
+      card.style.setProperty("--my", (py * 100) + "%");
+    });
+  });
+  card.addEventListener("mouseleave", () => {
+    if(raf) cancelAnimationFrame(raf);
+    card.style.transform = "";
+  });
+})();
+</script>
 
 <script>
 /* 主界面轮播:世间万物都能被放进同一晚——文献、邮件、健身、会话废料,随机两条,逐字点破 */
