@@ -8,6 +8,9 @@ description: Dream Layer 的 agent 接入(丢废料入梦池/做一夜梦/读晨
 Dream Layer 在夜里把白天流经系统的碎片(包括被拒的、犹豫的、废弃的)随机配对、高温碰撞,
 早上产出 ≤3 条「观察 + 问题」。它只观察与提问,不执行、不建议;梦不立项,由人拍板。
 
+> 隐私提醒:默认 `privacy.yaml mode: open`,素材内容会随 prompt 发往 `engine.yaml`
+> 的云端点。要"梦话不出本机"先切 `mode: local_only` + 本地引擎,再 drop 敏感碎片。
+
 ## 使用时机
 
 - 用户说"把这个丢进梦里 / 记下来今晚做梦用";

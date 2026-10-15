@@ -211,12 +211,15 @@ def run_industry(tmp_path, items, origin, rng_seed=42, anchor_mix=False):
     return text, dreams, keys
 
 
+def _mmdd(s: str):
+    """MM-DD -> date(年份钉死在闰年 2024:无年份解析在 3.15 起抛错,02-29 也能进)。"""
+    return datetime.strptime(f"2024-{s}", "%Y-%m-%d").date()
+
+
 def days_apart(dreams, dream) -> int:
     """一条晨报证据对的两条素材日期间隔(从 dream meta 的 MM-DD 推)。"""
     a, b = dream["meta"]["a"], dream["meta"]["b"]
-    da = datetime.strptime(a["date"], "%m-%d").date()
-    db = datetime.strptime(b["date"], "%m-%d").date()
-    return abs((da - db).days)
+    return abs((_mmdd(a["date"]) - _mmdd(b["date"])).days)
 
 
 def assert_morning_structure(text, dreams, pool_keys, expected_pairs=9):

@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/tests-179%20passing-176b75?style=flat-square" alt="179 tests passing">
+  <img src="https://img.shields.io/badge/tests-190%20passing-176b75?style=flat-square" alt="190 tests passing">
   <img src="https://img.shields.io/badge/python-%E2%89%A53.11-176b75?style=flat-square&logo=python&logoColor=white" alt="Python ≥ 3.11">
   <img src="https://img.shields.io/badge/license-MIT-176b75?style=flat-square" alt="MIT License">
   <img src="https://img.shields.io/badge/deps-pyyaml%20%2B%20openai-176b75?style=flat-square" alt="deps">
@@ -91,7 +91,7 @@ A failed `WebFetch` in today's chat session, paired with a note in your knowledg
 cd dream-layer
 python -m venv .venv
 .venv/Scripts/pip install pyyaml openai pytest    # openai only needed for real engine (lazy-loaded)
-.venv/Scripts/python -m pytest -q                 # 179 tests, all FakeLLM, zero network
+.venv/Scripts/python -m pytest -q                 # 190 tests, all FakeLLM, zero network
 .venv/Scripts/python -m dreamlayer run --once --fake   # zero cost, watch one fake night first
 ```
 
@@ -100,7 +100,7 @@ Real engine: any OpenAI-compatible endpoint (`config/engine.yaml`, change `base_
 | Config file | Governs |
 |---|---|
 | `weights.yaml` | Who deserves to be dreamed (five-value weights, zero hardcoding in core) |
-| `rhythm.yaml` | Bedtime/wake time, water level, temperature, pairing constraints, collectors |
+| `rhythm.yaml` | Bedtime/wake time, water level, temperature, pairing constraints, collectors (local overrides in gitignored `rhythm.local.yaml`) |
 | `privacy.yaml` | What is never read (deny-by-default, before reading), journal stays local, `mode` |
 | `engine.yaml` | Any OpenAI-compatible endpoint |
 
@@ -157,7 +157,7 @@ dream-layer/
 │   ├── engine.py             # FakeEngine / OpenAI-compatible (lazy openai)
 │   └── collectors/           # read_disk(jsonl/log/md/mdfile) / drop / demo
 ├── data/                     # runtime artifacts (gitignored; seed/ ships)
-└── tests/                    # 179 tests, FakeLLM, zero network
+└── tests/                    # 190 tests, FakeLLM, zero network
 ```
 
 ## Known limitations (said upfront)

@@ -85,14 +85,22 @@ def _serve(tmp_path, token=None):
     return srv
 
 
-def _post(url, body: bytes, headers=None):
+def _post(url, body: bytes, headers=None, retries: int = 3):
     req = urllib.request.Request(url, data=body, method="POST",
                                  headers={"Content-Type": "application/json", **(headers or {})})
-    try:
-        with urllib.request.urlopen(req, timeout=5) as resp:
-            return resp.status, json.loads(resp.read())
-    except urllib.error.HTTPError as e:
-        return e.code, json.loads(e.read())
+    import time
+
+    last = None
+    for _ in range(retries):
+        try:
+            with urllib.request.urlopen(req, timeout=5) as resp:
+                return resp.status, json.loads(resp.read())
+        except urllib.error.HTTPError as e:
+            return e.code, json.loads(e.read())
+        except ConnectionError as e:  # Windows 回环偶发 RST,重试一次
+            last = e
+            time.sleep(0.2)
+    raise last
 
 
 def test_post_endpoint_saves_jsonl(tmp_path):

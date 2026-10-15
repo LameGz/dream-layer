@@ -27,8 +27,10 @@ def one_pair():
     return Pair(mat(1), mat(2, tag="selected", origin="kb"))
 
 
-def test_refusal_patterns_exact():
-    assert REFUSAL_PATTERNS == ("我无法", "作为AI", "作为 AI", "抱歉,我不能")
+def test_refusal_patterns_include_english():
+    assert "as an ai" in REFUSAL_PATTERNS  # 英文拒答同样换 persona 重试,不绕过
+    assert is_refusal("As an AI I cannot help with that.")
+    assert is_refusal("I'm sorry, but I can't do that.")
 
 
 def test_is_refusal_hits_each_pattern():

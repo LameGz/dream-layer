@@ -103,11 +103,12 @@ def test_bad_collector_format_errors(tmp_project):
         load_config(tmp_project["config"])
 
 
-def test_unknown_rhythm_keys_ignored(tmp_project):
+def test_unknown_rhythm_keys_ignored_with_warning(tmp_project):
     p = tmp_project["config"] / "rhythm.yaml"
     p.write_text(RHYTHM_YAML + "pair_repeat: never\nquiet_cycle: { idle_days: 7 }\n",
                  encoding="utf-8")
-    cfg = load_config(tmp_project["config"])  # 预写字段不报错(quiet_cycle 已是已知键)
+    with pytest.warns(UserWarning, match="pair_repeat"):
+        cfg = load_config(tmp_project["config"])  # 预写字段不报错(quiet_cycle 已是已知键)
     assert cfg.rhythm.min_pool == 20
 
 
@@ -137,6 +138,15 @@ def test_p1_rhythm_defaults(tmp_project):
     assert cfg.rhythm.wake_max_tokens == 1500
     assert cfg.rhythm.webhook_url_env == "DREAM_WEBHOOK_URL"
     assert cfg.rhythm.quiet_cycle == {"idle_days": 7, "mode": "off"}
+
+
+def test_local_rhythm_override(tmp_project):
+    """rhythm.local.yaml 存在时整文件覆盖同名字段,不存在时走通用版。"""
+    local = tmp_project["config"] / "rhythm.local.yaml"
+    local.write_text("temperature: 0.95\n", encoding="utf-8")
+    cfg = load_config(tmp_project["config"])
+    assert cfg.rhythm.temperature == 0.95
+    assert cfg.rhythm.min_pool == 20  # 未覆盖字段走通用版
 
 
 def test_write_configs_helper_idempotent(tmp_path):

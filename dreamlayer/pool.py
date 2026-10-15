@@ -175,8 +175,8 @@ class Pool:
         if p is not None:
             p.write_text(json.dumps(self._coverage, ensure_ascii=False, indent=2), encoding="utf-8")
 
-    def record_coverage(self, keys, day: date) -> None:
-        """入梦素材记 {键: [最近入梦日期, 次数]}(C-3)。"""
+    def record_coverage(self, keys, day: date, *, save: bool = True) -> None:
+        """入梦素材记 {键: [最近入梦日期, 次数]}(C-3)。save=False 时只改内存,由调用方批量落盘。"""
         for k in keys:
             ent = self._coverage.get(k)
             if ent:
@@ -184,7 +184,8 @@ class Pool:
                 ent[1] = int(ent[1]) + 1
             else:
                 self._coverage[k] = [day.isoformat(), 1]
-        self._save_coverage()
+        if save:
+            self._save_coverage()
 
     def boost_factor(self, key: str, today: date) -> float:
         """覆盖 boost:从未入梦或距上次 > boost_days -> ×factor;纯结构性修正,不碰语义(G1)。"""

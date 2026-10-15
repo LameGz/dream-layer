@@ -10,8 +10,11 @@ import os
 import threading
 from typing import Callable, Protocol
 
-# 拒答模板句(C-4 原文);命中即换 persona 重试 refusal_retry 次
-REFUSAL_PATTERNS = ("我无法", "作为AI", "作为 AI", "抱歉,我不能")
+# 拒答模板句(C-4 原文 + 英文形态,全部小写存,匹配时 lower 比对——中文不受影响);
+# 命中即换 persona 重试 refusal_retry 次
+REFUSAL_PATTERNS = ("我无法", "作为ai", "作为 ai", "抱歉,我不能",
+                    "as an ai", "i can't", "i cannot", "i'm sorry, but i can't")
+REFUSAL_PATTERNS_LOWER = tuple(p.lower() for p in REFUSAL_PATTERNS)
 
 
 class Engine(Protocol):
@@ -23,7 +26,8 @@ class Engine(Protocol):
 def is_refusal(text: str) -> bool:
     if not text:
         return False
-    return any(p in text for p in REFUSAL_PATTERNS)
+    lowered = text.lower()  # 英文模板小写匹配,中文不受影响
+    return any(p in lowered for p in REFUSAL_PATTERNS_LOWER)
 
 
 class FakeEngine:

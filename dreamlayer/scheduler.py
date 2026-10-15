@@ -46,6 +46,13 @@ def build_engine(cfg: Cfg, fake: bool):
     if fake:
         return FakeEngine()
     e = cfg.engine
+    if cfg.privacy.mode != "local_only":
+        from urllib.parse import urlparse
+
+        host = (urlparse(e.base_url).hostname or "").lower()
+        where = "本机" if host in ("localhost", "127.0.0.1", "::1") else f"云端({host or e.base_url})"
+        print(f"[dreamlayer] 引擎去向:素材内容将随 prompt 发往{where} —— {e.base_url}",
+              flush=True)
     if cfg.privacy.mode == "local_only":
         from urllib.parse import urlparse
 
@@ -196,7 +203,9 @@ def dream_phase(cfg: Cfg, engine, data_dir, now=None, late=False, collect_meta=N
         constraints=cfg.rhythm.pair_constraints, history=history, mode=mode,
     )
     for p in pairs:
-        pool.record_coverage(p.keys(), today)
+        pool.record_coverage(p.keys(), today, save=False)
+    if pairs:
+        pool._save_coverage()
 
     dreams = dream_night(
         pairs, engine, cfg.rhythm.personas,

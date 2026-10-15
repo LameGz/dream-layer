@@ -66,8 +66,8 @@ class RhythmCfg:
     quiet_cycle: dict = field(
         default_factory=lambda: {"idle_days": 7, "mode": "alternate_days"}
     )
-    # 红队 C5 对照实验:{ ab: true } 时按日期奇偶交替 随机配对(A)/ 锚点+随机(B);
-    # 默认关——配对禁相似度的红线不变,B 组只是实验旁路
+    # 红队 C5 对照实验:{ ab: true } 时按"已实际做梦的夜数"奇偶交替
+    # 随机配对(A)/ 锚点+随机(B);默认关——配对禁相似度的红线不变,B 组只是实验旁路
     experiment: dict = field(default_factory=lambda: {"ab": False})
 
 
@@ -104,7 +104,9 @@ def _build(cls, data: dict, label: str):
     known = {f.name for f in fields(cls)}
     dropped = sorted(set(data) - known)
     if dropped:
-        # 未知键忽略(P0 允许预写 P1 字段,如 pair_repeat / quiet_cycle / max_reflux_per_day)
+        import warnings
+
+        warnings.warn(f"{label}: 未知键已忽略 {dropped}", UserWarning, stacklevel=3)
         data = {k: v for k, v in data.items() if k in known}
     try:
         return cls(**data)
@@ -199,6 +201,11 @@ def load_config(config_dir) -> Cfg:
         return data
 
     w, r, p, e = (read(n) for n in ("weights.yaml", "rhythm.yaml", "privacy.yaml", "engine.yaml"))
+    local_rhythm = d / "rhythm.local.yaml"
+    if local_rhythm.exists():
+        local = yaml.safe_load(local_rhythm.read_text(encoding="utf-8")) or {}
+        if isinstance(local, dict):
+            r = {**r, **local}  # 本机覆盖(采集路径/温度等),不入库,只活在工作区
     _validate(w, r, p, e)
     return Cfg(
         weights=_build(WeightsCfg, w, "weights.yaml"),

@@ -7,7 +7,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/tests-179%20passing-176b75?style=flat-square" alt="179 个测试">
+  <img src="https://img.shields.io/badge/tests-190%20passing-176b75?style=flat-square" alt="190 个测试">
   <img src="https://img.shields.io/badge/python-%E2%89%A53.11-176b75?style=flat-square&logo=python&logoColor=white" alt="Python ≥ 3.11">
   <img src="https://img.shields.io/badge/license-MIT-176b75?style=flat-square" alt="MIT License">
 </p>
@@ -90,7 +90,7 @@ flowchart TB
 cd dream-layer
 python -m venv .venv
 .venv/Scripts/pip install pyyaml openai pytest    # openai 仅真实引擎需要(懒加载)
-.venv/Scripts/python -m pytest -q                 # 179 个用例,全 FakeLLM 零网络
+.venv/Scripts/python -m pytest -q                 # 190 个用例,全 FakeLLM 零网络
 .venv/Scripts/python -m dreamlayer run --once --fake   # 零花费,先看一夜假梦
 ```
 
@@ -99,7 +99,7 @@ python -m venv .venv
 | 配置文件 | 管什么 |
 |---|---|
 | `weights.yaml` | 谁值得被梦见(五值权重,core 零硬编码) |
-| `rhythm.yaml` | 几点睡几点醒、水位、温度、配对约束、采集器 |
+| `rhythm.yaml` | 几点睡几点醒、水位、温度、配对约束、采集器(本机覆盖写 gitignored 的 `rhythm.local.yaml`) |
 | `privacy.yaml` | 哪些永远不看(默认 deny,先于读取)、journal 只落本地、`mode` |
 | `engine.yaml` | 梦见谁都可以(OpenAI 兼容端点即插即换) |
 
@@ -156,7 +156,7 @@ dream-layer/
 │   ├── engine.py             # FakeEngine / OpenAI 兼容引擎(openai 懒加载)
 │   └── collectors/           # read_disk(jsonl/log/md/mdfile)/ drop / demo
 ├── data/                     # 运行时产物(入 .gitignore;seed/ 随仓库走)
-└── tests/                    # 179 个用例,FakeLLM 零网络
+└── tests/                    # 190 个用例,FakeLLM 零网络
 ```
 
 ## 已知限制(说在前面)

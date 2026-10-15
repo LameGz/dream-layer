@@ -63,5 +63,7 @@ def test_is_refusal():
     assert is_refusal("我无法完成")
     assert is_refusal("作为AI我建议")
     assert is_refusal("作为 AI 我建议")
+    assert is_refusal("As an AI, I cannot do that.")
+    assert is_refusal("I'm sorry, but I can't help.")
     assert not is_refusal("这两条没碰出东西")
     assert not is_refusal("")
