@@ -142,13 +142,13 @@ class Pool:
 
     # ---------- 历史抽样 ----------
 
-    def sample_history(self, n: int, window_days: int, today: date | None = None) -> list[Material]:
+    def sample_history(self, n: int, window_days: int, today: date | None = None, exclude_keys=()) -> list[Material]:
         """窗口内均匀随机抽 n 条历史素材(不含今天)。"""
         today = today or date.today()
         cands = [
             m
             for m in self._by_key.values()
-            if 0 < (today - m.time.date()).days <= window_days
+            if 0 < (today - m.time.date()).days <= window_days and m.key not in exclude_keys
         ]
         return self.rng.sample(cands, min(n, len(cands)))
 
@@ -211,6 +211,7 @@ class Pool:
         constraints: dict | None = None,
         history: list[Material] | None = None,
         mode: str = "random",
+        window_start: date | None = None,
     ) -> tuple[list[Pair], PairStats]:
         """约束配对(C-3):分级可配;放宽要计数;梦不因约束停摆——"没东西可梦"只看水位。
 
@@ -225,9 +226,11 @@ class Pool:
         hard, soft = list(cons.get("hard", ["tag"])), list(cons.get("soft", ["origin", "time_bucket"]))
         stats = PairStats()
 
-        today_items = [m for m in self._by_key.values() if m.time.date() == today]
+        today_items = [m for m in self._by_key.values() if (window_start or today) <= m.time.date() <= today]
+        current_keys = {m.key for m in today_items}
         if history is None:
-            history = self.sample_history(self.weights.history_sample, self.weights.history_window_days, today)
+            history = self.sample_history(self.weights.history_sample, self.weights.history_window_days, today, exclude_keys=current_keys)
+        history = [m for m in history if m.key not in current_keys]
         stats.history_sampled = len(history)
         candidates = today_items + list(history)
 

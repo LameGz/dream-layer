@@ -159,6 +159,8 @@ dream-layer/
 └── tests/                    # 190 个用例,FakeLLM 零网络
 ```
 
+凌晨素材窗口覆盖前一日及当日采集阶段的数据。每轮运行拥有独立 ttempt_id,梦境编号为 YYYY-MM-DD-<attempt>-NN;原始记录保留在 data/dreams/attempts/<日期>/,按日期的文件只是最新视图。旧版日期-NN 编号仍可查询和确认。
+
 ## 已知限制(说在前面)
 
 - **晨报的 verdict 是机器暂定**(跨时点破锁 cross_time,意外度暂定 trend),最终判定永远属于 `confirm` 那一下;

@@ -40,12 +40,12 @@ def load_log(data_dir) -> list[dict]:
 
 def find_dream(data_dir, dream_id: str) -> dict | None:
     """按 dream_id(YYYY-MM-DD-NN)在 data/dreams/ 下定位 dream 记录。"""
-    stem = dream_id.rsplit("-", 1)[0]
-    if not stem.count("-") == 2:
-        return None
-    from .journal import read_dreams
+    from .journal import read_dreams, dream_file
 
-    _, dreams = read_dreams(Path(data_dir) / "dreams" / f"{stem}.jsonl")
+    path = dream_file(data_dir, dream_id)
+    if path is None:
+        return None
+    _, dreams = read_dreams(path)
     for d in dreams:
         if d.get("dream_id") == dream_id:
             return d
@@ -84,28 +84,17 @@ def append_confirm(data_dir, dream_id: str, verdict: str, dream: dict | None = N
 
 def mark_confirmed(data_dir, dream_id: str) -> None:
     """在 dreams jsonl 的对应记录上打 confirmed 标记(幂等;找不到文件则忽略)。"""
-    stem = dream_id.rsplit("-", 1)[0]
-    f = Path(data_dir) / "dreams" / f"{stem}.jsonl"
-    if not f.exists():
+    from .journal import dream_file, parse_dream_id, read_dreams, write_dreams
+    f = dream_file(data_dir, dream_id)
+    if f is None or not f.exists():
         return
-    lines_out = []
-    changed = False
-    for line in f.read_text(encoding="utf-8").splitlines():
-        if not line.strip():
-            continue
-        try:
-            obj = json.loads(line)
-        except json.JSONDecodeError:
-            lines_out.append(line)
-            continue
-        if isinstance(obj, dict) and obj.get("dream_id") == dream_id and not obj.get("confirmed"):
-            obj["confirmed"] = True
-            changed = True
-            lines_out.append(json.dumps(obj, ensure_ascii=False))
-        else:
-            lines_out.append(line)
+    meta, dreams = read_dreams(f)
+    changed = any(d.get('dream_id') == dream_id and not d.get('confirmed') for d in dreams)
+    for d in dreams:
+        if d.get('dream_id') == dream_id:
+            d['confirmed'] = True
     if changed:
-        f.write_text("\n".join(lines_out) + "\n", encoding="utf-8")
+        write_dreams(date.fromisoformat(parse_dream_id(dream_id)[0]), dreams, meta or {}, Path(data_dir) / 'dreams')
 
 
 def confirmed_dates(log: list[dict]) -> list[date]:
@@ -144,8 +133,9 @@ def load_candidates(data_dir, day: date) -> list[dict]:
     from .journal import read_dreams
 
     _, dreams = read_dreams(Path(data_dir) / "dreams" / f"{day.isoformat()}.jsonl")
+    log = load_log(data_dir)
     return [d for d in dreams
-            if d.get("verdict") in REFLUX_VERDICTS and not d.get("confirmed")]
+            if d.get("verdict") in REFLUX_VERDICTS and not d.get("confirmed") and not already_confirmed(log, d.get('dream_id'))]
 
 
 def apply_batch(data_dir, specs: list[str]) -> tuple[int, list[str]]:

@@ -144,7 +144,7 @@ def test_dreams_jsonl_roundtrip(tmp_path):
     night, dreams = read_dreams(tmp_path / "dr" / "2026-10-01.jsonl")
     assert night["pairs"] == 1
     assert len(dreams) == 1
-    assert dreams[0]["dream_id"] == "2026-10-01-01"
+    assert dreams[0]["dream_id"] == f"2026-10-01-{night['attempt_id']}-01"
     assert dreams[0]["meta"]["a"]["key"] == "ka"
     # wake 写回 verdict 后再次落盘,字段保留
     dreams[0]["verdict"] = "noise"

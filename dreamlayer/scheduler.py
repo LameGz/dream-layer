@@ -10,6 +10,7 @@ import random
 import re
 import sys
 import time
+import uuid
 from datetime import date, datetime, time as dtime, timedelta
 from pathlib import Path
 
@@ -95,7 +96,8 @@ def collect_phase(cfg: Cfg, collectors, data_dir, now=None, pool: Pool | None = 
     now = now or datetime.now()
     pool = pool if pool is not None else Pool(cfg.weights, data_dir=Path(data_dir) / "pool", rng=rng)
     meta = {"pool": 0, "dropped": 0, "redacted": 0, "warnings_detail": []}
-    pruned = pool.prune(now.date() - timedelta(days=cfg.privacy.retention_days))
+    cutoff = now.date() - timedelta(days=cfg.privacy.retention_days)
+    pruned = pool.prune(cutoff)
     if pruned:
         meta["warnings_detail"].append(f"pool_pruned:{pruned}")
     max_chars = cfg.rhythm.content_max_chars
@@ -143,6 +145,9 @@ def collect_phase(cfg: Cfg, collectors, data_dir, now=None, pool: Pool | None = 
             if res.material is None:
                 meta["dropped"] += 1
                 continue
+            if res.material.time.date() < cutoff:
+                meta['dropped'] += 1
+                continue
             if res.warning:
                 meta["warnings_detail"].append(res.warning)
             pool.add(res.material)
@@ -150,7 +155,7 @@ def collect_phase(cfg: Cfg, collectors, data_dir, now=None, pool: Pool | None = 
 
 
 def dream_phase(cfg: Cfg, engine, data_dir, now=None, late=False, collect_meta=None,
-                pool: Pool | None = None, rng=None):
+                pool: Pool | None = None, rng=None, attempt_id=None):
     """水位检查 -> quiet 频控 -> 加权候选 -> 约束配对 -> 并行微型梦 -> journal + dreams jsonl 落盘。"""
     now = now or datetime.now()
     today = now.date()
@@ -160,6 +165,8 @@ def dream_phase(cfg: Cfg, engine, data_dir, now=None, late=False, collect_meta=N
     meta = dict(collect_meta or {"pool": len(pool), "dropped": 0, "redacted": 0, "warnings_detail": []})
     meta["journal_local_only"] = cfg.privacy.journal_local_only
     meta["late"] = late
+    meta['attempt_id'] = attempt_id or uuid.uuid4().hex[:12]
+    meta['engine_mode'] = 'fake' if isinstance(engine, FakeEngine) else 'real'
     journal_dir = data_dir / "journal"
 
     def _empty(reason):
@@ -168,10 +175,13 @@ def dream_phase(cfg: Cfg, engine, data_dir, now=None, late=False, collect_meta=N
             all_noise=False, warnings=len(meta.get("warnings_detail", [])),
             reason=reason,
         )
+        write_dreams(today, [], meta, dreams_dir=data_dir / 'dreams')
         return write_journal(today, [], meta, journal_dir=journal_dir)
 
     # 水位:当日 < min_pool -> "太累但没东西可梦",当夜结束("没东西可梦"只看水位)
-    if pool.count_on(today) < cfg.rhythm.min_pool:
+    window_start = today - timedelta(days=1)
+    recent = {m.key for m in pool.all_materials() if window_start <= m.time.date() <= today}
+    if len(recent) < cfg.rhythm.min_pool:
         return _empty(REASON_NO_MATERIAL)
 
     # quiet_cycle(FR-D4):连续 idle_days 天无有效回流 -> 隔日梦
@@ -179,7 +189,7 @@ def dream_phase(cfg: Cfg, engine, data_dir, now=None, late=False, collect_meta=N
     if skip:
         return _empty(qnote)
 
-    history = pool.sample_history(cfg.weights.history_sample, cfg.weights.history_window_days, today)
+    history = pool.sample_history(cfg.weights.history_sample, cfg.weights.history_window_days, today, exclude_keys=recent)
     # 红队 C5 对照实验:experiment.ab 开启时交替 A(随机)/ B(锚点+随机);
     # arm 标记进 night meta(dreams jsonl),metrics 按组聚合确认率。
     # 终审问题 1:交替按"已实际做梦的夜数"奇偶,不是日历序数——quiet_cycle 隔日梦
@@ -200,7 +210,7 @@ def dream_phase(cfg: Cfg, engine, data_dir, now=None, late=False, collect_meta=N
     mode = "anchor_mix" if arm == "B" else "random"
     pairs, stats = pool.build_pairs(
         cfg.rhythm.pairs_per_night, today,
-        constraints=cfg.rhythm.pair_constraints, history=history, mode=mode,
+        constraints=cfg.rhythm.pair_constraints, history=history, mode=mode, window_start=window_start,
     )
     for p in pairs:
         pool.record_coverage(p.keys(), today, save=False)
@@ -243,7 +253,7 @@ def _journal_note(journal_path: Path) -> str | None:
     return m.group(1).strip() if m else None
 
 
-def wake_phase(cfg: Cfg, engine, data_dir, now=None, pool: Pool | None = None):
+def wake_phase(cfg: Cfg, engine, data_dir, now=None, pool: Pool | None = None, attempt_id=None):
     """醒来:两路筛选 -> 两道闸 -> journal verdict 重写 -> morning.md -> 保底产物。
 
     返回 (refluxes, morning_path)。dreams jsonl 缺失(水位不足夜)时只写晨报说明行。
@@ -253,6 +263,8 @@ def wake_phase(cfg: Cfg, engine, data_dir, now=None, pool: Pool | None = None):
     data_dir = Path(data_dir)
     pool = pool if pool is not None else Pool(cfg.weights, data_dir=data_dir / "pool")
     dreams_path = data_dir / "dreams" / f"{today.isoformat()}.jsonl"
+    if attempt_id:
+        dreams_path = data_dir / 'dreams' / 'attempts' / today.isoformat() / f'{attempt_id}.jsonl'
 
     note = None
     refluxes = []
@@ -280,8 +292,9 @@ def wake_phase(cfg: Cfg, engine, data_dir, now=None, pool: Pool | None = None):
             note = None
         else:
             night_meta["all_noise"] = True
-            night_meta["reason"] = REASON_ALL_NOISE
-            note = REASON_ALL_NOISE
+            note = night_meta.get('reason') if not dream_dicts else None
+            note = note or REASON_ALL_NOISE
+            night_meta["reason"] = note
         # verdict 回写:dreams jsonl + journal 同步为真值(FR-E1)
         write_dreams(today, dream_dicts, night_meta, dreams_dir=data_dir / "dreams")
         write_journal(today, dream_dicts, night_meta, journal_dir=data_dir / "journal")
@@ -319,11 +332,12 @@ def run_once(cfg: Cfg, collectors, engine, data_dir=Path("data"), late=False,
     now = now or datetime.now()
     rng = rng or random.Random()
     data_dir = Path(data_dir)
+    attempt = uuid.uuid4().hex[:12]
     pool, cmeta = collect_phase(cfg, collectors, data_dir, now=now, rng=rng)
     path = dream_phase(cfg, engine, data_dir, now=now, late=late, collect_meta=cmeta,
-                       pool=pool, rng=rng)
+                       pool=pool, rng=rng, attempt_id=attempt)
     try:
-        wake_phase(cfg, engine, data_dir, now=now, pool=pool)
+        wake_phase(cfg, engine, data_dir, now=now, pool=pool, attempt_id=attempt)
     except Exception as e:
         print(f"[dreamlayer] wake phase failed: {e}", file=sys.stderr, flush=True)
     return path
@@ -391,6 +405,7 @@ def run_daemon(cfg: Cfg, collectors=None, engine=None, data_dir=Path("data"),
 
     pool: Pool | None = None
     collect_meta = None
+    attempt = None
     while True:
         now = datetime.now()
         tick_at, phase = next_tick(now, phase_times(cfg))
@@ -399,11 +414,12 @@ def run_daemon(cfg: Cfg, collectors=None, engine=None, data_dir=Path("data"),
             if phase == "collect":
                 pool, collect_meta = collect_phase(cfg, collectors, data_dir, rng=rng)
             elif phase == "dream":
-                dream_phase(cfg, engine, data_dir, collect_meta=collect_meta, pool=pool, rng=rng)
+                attempt = uuid.uuid4().hex[:12]
+                dream_phase(cfg, engine, data_dir, collect_meta=collect_meta, pool=pool, rng=rng, attempt_id=attempt)
                 collect_meta = None  # 一夜结束
             else:
                 # 05:00 wake:两路筛选 -> 两道闸 -> morning.md + 保底产物(P1)
-                wake_phase(cfg, engine, data_dir=data_dir, pool=pool)
+                wake_phase(cfg, engine, data_dir=data_dir, pool=pool, attempt_id=attempt)
         except Exception as e:  # 熔断-lite:单次异常不杀节律,不重试轰炸(v0.3 §8)
             print(f"[dreamlayer] {phase} phase failed: {e}", flush=True)
             collect_meta = None
