@@ -26,6 +26,7 @@ _FM_DATE = re.compile(r"^date:\s*(.+)$", re.M)
 def read_md_file(path, default_tag, origin) -> list[dict]:
     """整篇笔记 = 一条碎片:knowledge-base 模式。date 取 front-matter,缺省文件 mtime。"""
     text = Path(path).read_text(encoding="utf-8", errors="replace")
+    t = datetime.fromtimestamp(os.path.getmtime(path))
     if text.startswith("---"):
         end = text.find("\n---", 3)
         if end != -1:

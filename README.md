@@ -160,6 +160,8 @@ dream-layer/
 └── tests/                    # 190 tests, FakeLLM, zero network
 ```
 
+Nightly input covers the previous calendar day plus the current day up to the collection phase. Each new run has a separate ttempt_id; dream IDs are YYYY-MM-DD-<attempt>-NN. Per-attempt records stay under data/dreams/attempts/<date>/; the dated file is only the latest view. Legacy date-NN confirmations remain readable.
+
 ## Known limitations (said upfront)
 
 - **Verdicts are machine-nominated** (cross-time anchors lock `cross_time`, surprise scores tentatively `trend`) — the final call is always the human `confirm`;

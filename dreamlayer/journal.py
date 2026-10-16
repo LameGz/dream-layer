@@ -4,14 +4,20 @@ P1:waker 给出 verdict 后重写 journal(verdict/observation/open_question 真�
 一夜全 noise -> all_noise=true + note"今夜无梦"(FR-B6)。journal.md 之外另有
 data/dreams/YYYY-MM-DD.jsonl(§6 梦话契约的机器可读落盘,wake/confirm 的数据源):
   行 1 = {"record": "night", "date": ..., "meta": {...11 字段...}}
-  行 N = {"record": "dream", "dream_id": "YYYY-MM-DD-NN", "pair": [...], "persona": ...,
+  行 N = {"record": "dream", "dream_id": "YYYY-MM-DD-attempt-NN", "pair": [...], "persona": ...,
           "raw": ..., "meta": {temperature, attempts, a, b}, + wake 写回的 verdict 字段}
-dream_id 与 journal 的 "## pair NN" 同序号:pair 07 -> dream_id 2026-10-01-07。
+dream_id 中 attempt 是每次运行的 12 位随机标识;兼容读取旧的 YYYY-MM-DD-NN。
+逐次记录保存在 dreams/attempts/<date>/ 下,日期文件是最近一次运行的兼容视图。
 """
 
 from __future__ import annotations
 
 import json
+import os
+import re
+import tempfile
+import threading
+import uuid
 from datetime import date
 from pathlib import Path
 
@@ -19,6 +25,40 @@ from .privacy import assert_journal_safe
 
 REASON_NO_MATERIAL = "太累但没东西可梦"
 REASON_ALL_NOISE = "今夜无梦"
+_WRITE_LOCK = threading.RLock()
+
+
+def atomic_text(path: Path, text: str):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd, temporary = tempfile.mkstemp(prefix=path.name + '.', dir=path.parent)
+    try:
+        with os.fdopen(fd, 'w', encoding='utf-8', newline='\n') as stream:
+            stream.write(text)
+        os.replace(temporary, path)
+    finally:
+        if os.path.exists(temporary):
+            os.unlink(temporary)
+
+
+def parse_dream_id(ident: str):
+    match = re.fullmatch(r'(\d{4}-\d{2}-\d{2})(?:-([a-f0-9]{12}))?-(\d{2,})', ident)
+    if not match:
+        return None
+    try:
+        date.fromisoformat(match[1])
+    except ValueError:
+        return None
+    return match[1], match[2], match[3]
+
+
+def dream_file(data_dir, dream_id):
+    parsed = parse_dream_id(dream_id)
+    if not parsed:
+        return None
+    day, attempt, _ = parsed
+    root = Path(data_dir) / 'dreams'
+    archive = root / 'attempts' / day / f'{attempt or "legacy"}.jsonl'
+    return archive if archive.is_file() else root / f'{day}.jsonl'
 
 # C-6 要求的 meta 字段(按此顺序渲染 meta 行)
 META_FIELDS = (
@@ -110,7 +150,10 @@ def write_journal(day: date, dreams, meta: dict, journal_dir=None) -> Path:
     if meta.get("journal_local_only", True):
         assert_journal_safe(target)
     journal_dir.mkdir(parents=True, exist_ok=True)
-    target.write_text(render_journal(day, dreams, meta), encoding="utf-8")
+    text = render_journal(day, dreams, meta)
+    if meta.get('attempt_id'):
+        atomic_text(journal_dir / 'attempts' / day.isoformat() / (meta['attempt_id'] + '.md'), text)
+    atomic_text(target, text)
     return target
 
 
@@ -131,15 +174,51 @@ def dream_to_dict(d, dream_id: str) -> dict:
 
 def write_dreams(day: date, dreams, meta: dict, dreams_dir=None) -> Path:
     """一夜梦话落盘 data/dreams/YYYY-MM-DD.jsonl(行 1 night meta,其后逐 dream)。"""
-    dreams_dir = Path(dreams_dir) if dreams_dir is not None else Path("data/dreams")
-    dreams_dir.mkdir(parents=True, exist_ok=True)
-    target = dreams_dir / f"{day.isoformat()}.jsonl"
-    lines = [json.dumps({"record": "night", "date": day.isoformat(), "meta": dict(meta)},
-                        ensure_ascii=False)]
-    for i, d in enumerate(dreams, 1):
-        lines.append(json.dumps(dream_to_dict(d, f"{day.isoformat()}-{i:02d}"), ensure_ascii=False))
-    target.write_text("\n".join(lines) + "\n", encoding="utf-8")
-    return target
+    with _WRITE_LOCK:
+        root = Path(dreams_dir) if dreams_dir is not None else Path('data/dreams')
+        latest = root / f'{day.isoformat()}.jsonl'
+        meta = dict(meta)
+        records = list(dreams)
+        identities = [_dget(d, 'dream_id') for d in records]
+        attempt = meta.get('attempt_id')
+        if not attempt and identities and all(identities):
+            parsed = parse_dream_id(identities[0])
+            attempt = parsed[1] if parsed else None
+        elif not attempt:
+            attempt = uuid.uuid4().hex[:12]
+        if attempt:
+            if not re.fullmatch(r'[a-f0-9]{12}', attempt):
+                raise ValueError('Invalid attempt_id')
+            meta['attempt_id'] = attempt
+        archive = root / 'attempts' / day.isoformat() / f'{attempt or "legacy"}.jsonl'
+        is_new = not archive.exists()
+        # Preserve old date-NN records before advancing the compatibility view.
+        if latest.is_file():
+            old_meta, _ = read_dreams(latest)
+            legacy = root / 'attempts' / day.isoformat() / 'legacy.jsonl'
+            if not (old_meta or {}).get('attempt_id') and not legacy.exists():
+                atomic_text(legacy, latest.read_text(encoding='utf-8'))
+        _, previous = read_dreams(archive)
+        by_id = {d['dream_id']: d for d in previous}
+        prefix = day.isoformat() + (f'-{attempt}' if attempt else '')
+        out = []
+        for i, dream in enumerate(records, 1):
+            record = dream_to_dict(dream, f'{prefix}-{i:02d}')
+            before = by_id.get(record['dream_id'])
+            if before:
+                if any(record.get(k) != before.get(k) for k in ('pair', 'raw')):
+                    raise ValueError('Dream identity cannot be reused for different content')
+                if before.get('confirmed'):
+                    record['confirmed'] = True
+            out.append(record)
+        lines = [json.dumps({'record': 'night', 'date': day.isoformat(), 'meta': meta}, ensure_ascii=False)]
+        lines.extend(json.dumps(d, ensure_ascii=False) for d in out)
+        text = '\n'.join(lines) + '\n'
+        atomic_text(archive, text)
+        latest_meta, _ = read_dreams(latest)
+        if is_new or not latest.exists() or (latest_meta or {}).get('attempt_id') == attempt:
+            atomic_text(latest, text)
+        return archive
 
 
 def read_dreams(path) -> tuple[dict | None, list[dict]]:
